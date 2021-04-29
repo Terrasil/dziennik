@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Login from './components/Login';
+import Users from './components/Users';
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
@@ -13,9 +14,9 @@ function App() {
   return (
     <>
       <Login userLogin={userLogin}/>
+      <Users token={token}/>
     </>
   );
 }
-//<Users token={token}/>
 
 export default App;

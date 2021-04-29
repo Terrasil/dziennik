@@ -72,10 +72,27 @@ class Login extends Component {
     );
   }
 }*/
-const Login = () => {
+const Login = (props) => {
 
   const [ form, setForm ] = useState({})
   const [ errors, setErrors ] = useState({})
+
+  const login = (event) => {
+    fetch('http://localhost:8000/auth/', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(form)
+      
+    })
+    .then( data => data.json())
+    .then(
+      data => {
+        console.log(data.token);
+        props.userLogin(data.token);
+      }
+    )
+    .catch( error => console.error(error))
+  }
 
   const setField = (field, value) => {
     setForm({
@@ -92,8 +109,6 @@ const Login = () => {
   const handleSubmit = e => {
     e.preventDefault()
     const newErrors = findFormErrors()
-    
-    this.props.userLogin('testowy-token');
     // Set errors messages into control feedbacks
     if ( Object.keys(newErrors).length > 0 ) {
       setErrors(newErrors)
@@ -101,16 +116,17 @@ const Login = () => {
       return false
     } else {
       // Vadlidated
+      login()
       return true
     }
   }
 
   // Form validation
   const findFormErrors = () => {
-    const { login, password } = form
+    const { username, password } = form
     const newErrors = {}
-    // Login errors
-    if ( !login || login === '' ) newErrors.login = 'Podaj adres email!'
+    // Username errors
+    if ( !username || username === '' ) newErrors.username = 'Podaj adres email!'
     // Password errors
     // Login errors
     if ( !password || password === '' ) newErrors.password = 'Podaj hasło!'
@@ -129,16 +145,16 @@ const Login = () => {
           <Form.Group>
             <Form.Label>Adres Email</Form.Label>
             <Form.Control 
-              type='text' 
-              onChange={ e => setField('login', e.target.value) }
-              isInvalid={ !!errors.login }
+              type='text' name="username"
+              onChange={ e => setField('username', e.target.value) }
+              isInvalid={ !!errors.username }
             />
-            <Form.Control.Feedback type='invalid'>{ errors.login }</Form.Control.Feedback>
+            <Form.Control.Feedback type='invalid'>{ errors.username }</Form.Control.Feedback>
           </Form.Group>
           <Form.Group>
             <Form.Label>Hasło</Form.Label>
             <Form.Control 
-              type='password' 
+              type='password' name="password"
               onChange={ e => setField('password', e.target.value) }
               isInvalid={ !!errors.password }
             />

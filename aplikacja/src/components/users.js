@@ -7,7 +7,7 @@ class Users extends Component {
   }
 
   loadUsers = () => {
-    fetch('http://localhost:8000/api/users/', {
+    fetch('http://localhost:8000/api/userlist/', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -18,7 +18,11 @@ class Users extends Component {
     .then( data => data.json())
     .then(
       data => {
-        this.setState({users: data})
+        if(data.detail){
+          this.setState({users: []})
+        }else{
+          this.setState({users: data})
+        }
       }
     )
     .catch( error => console.error(error))
@@ -28,8 +32,8 @@ class Users extends Component {
     return (
       <div>
         <h1>Users list</h1>
-        { this.state.users.map( book => {
-          return <h3 key={book.id}>{book.username}</h3>
+        { this.state.users?.map( user => {
+          return <h3 key={user.id}>{user.email}</h3>
         })}
         <button onClick={this.loadUsers}>Load Users</button>
       </div>
