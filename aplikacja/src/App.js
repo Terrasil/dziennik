@@ -1,22 +1,21 @@
 import React, { useState } from 'react';
-import './App.css';
-import Login from './components/login';
-import Users from './components/users';
+import Login from './components/Login';
+import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
 
   const [token, setToken] = useState('');
 
-  const userLogin = (tok) => {
-    setToken(tok);
+  const userLogin = (token) => {
+    setToken(token);
   }
 
   return (
-    <div className="App">
+    <>
       <Login userLogin={userLogin}/>
-      <Users token={token}/>
-    </div>
+    </>
   );
 }
+      //<Users token={token}/>
 
 export default App;

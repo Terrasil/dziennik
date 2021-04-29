@@ -27,7 +27,7 @@ class Users extends Component {
   render() {
     return (
       <div>
-        <h1>Users</h1>
+        <h1>Users list</h1>
         { this.state.users.map( book => {
           return <h3 key={book.id}>{book.username}</h3>
         })}
