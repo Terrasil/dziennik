@@ -82,7 +82,7 @@ const Login = () => {
       ...form,
       [field]: value
     })
-    // Check and see if errors exist, and remove them from the error object:
+    // Check and see if errors exist, and remove them from the error object
     if ( !!errors[field] ) setErrors({
       ...errors,
       [field]: null
@@ -91,20 +91,21 @@ const Login = () => {
 
   const handleSubmit = e => {
     e.preventDefault()
-    // get our new errors
     const newErrors = findFormErrors()
-    // Conditional logic:
+    
+    this.props.userLogin('testowy-token');
+    // Set errors messages into control feedbacks
     if ( Object.keys(newErrors).length > 0 ) {
-      // We got errors!
       setErrors(newErrors)
+      // Invadlidated
       return false
     } else {
-      // No errors! Put any logic here for the form submission!
-      alert('Thank you for your feedback!')
+      // Vadlidated
       return true
     }
   }
 
+  // Form validation
   const findFormErrors = () => {
     const { login, password } = form
     const newErrors = {}
@@ -115,13 +116,12 @@ const Login = () => {
     if ( !password || password === '' ) newErrors.password = 'Podaj hasło!'
     // Password errors
 
-
     return newErrors
   }
 
   return (
-    <div class="container h-100">
-      <div class="row h-100 justify-content-center align-items-center">
+    <div className="container h-100">
+      <div className="row h-100 justify-content-center align-items-center">
         <Form className="col-md-6">
           <Form.Group className="text-center">
             <Image src={Logo} style={{border: 'none'}} thumbnail />
