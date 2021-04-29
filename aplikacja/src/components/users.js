@@ -1,12 +1,12 @@
 import React, { Component} from 'react';
 
-class Books extends Component {
+class Users extends Component {
 
   state = {
-    books: []
+    users: []
   }
 
-  loadBooks = () => {
+  loadUsers = () => {
     fetch('http://localhost:8000/api/users/', {
       method: 'GET',
       headers: {
@@ -18,7 +18,7 @@ class Books extends Component {
     .then( data => data.json())
     .then(
       data => {
-        this.setState({books: data})
+        this.setState({users: data})
       }
     )
     .catch( error => console.error(error))
@@ -27,14 +27,14 @@ class Books extends Component {
   render() {
     return (
       <div>
-        <h1>Books</h1>
-        { this.state.books.map( book => {
+        <h1>Users</h1>
+        { this.state.users.map( book => {
           return <h3 key={book.id}>{book.username}</h3>
         })}
-        <button onClick={this.loadBooks}>Load Books</button>
+        <button onClick={this.loadUsers}>Load Users</button>
       </div>
     );
   }
 }
 
-export default Books;
+export default Users;

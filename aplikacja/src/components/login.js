@@ -1,20 +1,21 @@
-import React, { Component} from 'react';
+import React, { Component } from 'react';
 
 class Login extends Component {
-
   state = {
     credentials: {username: '', password: ''}
   }
 
   login = event => {
-    fetch('http://localhost:8000/auth/login/', {
+    fetch('http://localhost:8000/auth/', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(this.state.credentials)
+      
     })
     .then( data => data.json())
     .then(
       data => {
+        console.log(data.token);
         this.props.userLogin(data.token);
       }
     )

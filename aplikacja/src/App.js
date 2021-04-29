@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './App.css';
 import Login from './components/login';
-import Books from './components/books';
+import Users from './components/users';
 
 function App() {
 
@@ -14,7 +14,7 @@ function App() {
   return (
     <div className="App">
       <Login userLogin={userLogin}/>
-      <Books token={token}/>
+      <Users token={token}/>
     </div>
   );
 }
