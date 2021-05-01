@@ -1,4 +1,4 @@
-import React, { Component} from 'react';
+import React, { Component } from 'react';
 
 class Users extends Component {
 
@@ -7,13 +7,12 @@ class Users extends Component {
   }
 
   loadUsers = () => {
-    fetch('http://localhost:8000/api/userlist/', {
+    fetch('http://localhost:8000/api/users/', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Token ${this.props.token}`
-      },
-      body: JSON.stringify(this.state.credentials)
+        Authorization: `Token ${this.props.csrftoken}`
+      }
     })
     .then( data => data.json())
     .then(
