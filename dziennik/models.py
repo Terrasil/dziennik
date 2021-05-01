@@ -38,6 +38,7 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     last_name = models.CharField(max_length=150, blank=True)
     start_date = models.DateTimeField(default=timezone.now)
     role = models.CharField(max_length=150)
+    phone = models.CharField(max_length=17, blank=True) 
     about = models.TextField(_(
         'about'), max_length=500, blank=True)
     is_staff = models.BooleanField(default=False)
@@ -54,7 +55,6 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     class Meta:
         verbose_name = "User"
         verbose_name_plural = "Users"
-
 
 
 class Institution(models.Model):
@@ -83,8 +83,6 @@ class Employee(models.Model):
     active = models.BooleanField(default=False)
     first_name = models.CharField(max_length = 20,default=True)
     last_name = models.CharField(max_length = 20,default=True)
-    #phone_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$', message="Telefon musi być podany w formacie: '999999999'.")
-    #phone = models.CharField(validators=[phone_regex], max_length=17, blank=True) 
     creation_date = models.DateTimeField(default=timezone.now())
 
     def __str__(self):

@@ -4,6 +4,7 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Image from 'react-bootstrap/Image'
 import Logo from '../img/logo.png'
+import { Alert } from 'react-bootstrap';
 /*
 register = event => {
     fetch('http://localhost:8000/api/users/', {
@@ -20,10 +21,12 @@ register = event => {
     .catch( error => console.error(error))
   }
 */
-const Login = (props) => {
+function Login(props){
 
   const [ form, setForm ] = useState({})
   const [ errors, setErrors ] = useState({})
+  const [ receivetoken, setReceiveToken ] = useState({})
+  const [ receiveuserdata, setReceiveUserData ] = useState({})
 
   // Pobieranie informacji o uzytkowniku z Django
   const userData = (token) => {
@@ -41,10 +44,12 @@ const Login = (props) => {
         // Jeżeli się nie powiedzie otrzymamy {detail: 'wiadomość o błędzie'}
         if(data.detail){
           // Nieudane otrzymanie danych o użytkowniku
+          setReceiveUserData(false)
           // Zwracam pustą listę/tablicę
           return []
         }else{
           // Udane otrzymanie danych o użytkowniku
+          setReceiveUserData(true)
           // Zwracam informacje o otrzymanym uzytkowniku (JSON)
           return data
         }
@@ -67,8 +72,10 @@ const Login = (props) => {
         // Jeżeli się nie powiedzie otrzymamy {detail: 'wiadomość o błędzie'}
         if(data.detail){
           // Nieudane otrzymanie CSRFTokena
+          setReceiveToken(false)
         }else{
           // Udane otrzymanie CSRFTokena
+          setReceiveToken(true)
           // Zwracamy token do Aplikacji
           props.getCSRFToken(data.token);
           // Zwracamy informacje o użytkowniku do Aplikacji
@@ -116,12 +123,22 @@ const Login = (props) => {
     const newErrors = {}
 
     // Username errory
+    // Nie podano email'a (username)
     if ( !username || username === '' ) newErrors.username = 'Podaj adres email!'
+    // Zły format/pattern email'a
     else if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(username)) newErrors.username = 'Podano zły format! \'example@mail.com\''
 
     // Password errory
+    // Nie podano hasła
     if ( !password || password === '' ) newErrors.password = 'Podaj hasło!'
+    // Hasło zakrótkie (min. 8 znaków)
     else if(password.length < 8) newErrors.password = 'Podano zakrótkie hasło!'
+
+    // Nieudane logowanie
+    // Nie otrzymano csrftokena
+    if ( !receivetoken ) newErrors.login = 'Nazwa użytkownika i hasło nie zgadzają się. Sprawdź jeszcze raz i spróbuj ponownie.'
+    // Nie otrzymano informacji o użytkowniku
+    if ( !receiveuserdata ) newErrors.login = 'Nazwa użytkownika lub hasło nie zgadzają się. Sprawdź jeszcze raz i spróbuj ponownie.'
 
     return newErrors
   }
@@ -151,6 +168,9 @@ const Login = (props) => {
                 isInvalid={ !!errors.password }
               />
               <Form.Control.Feedback type='invalid'>{ errors.password }</Form.Control.Feedback>
+            </Form.Group>
+            <Form.Group>
+              <Alert variant={'danger'} show={ !!errors.login } type='invalid'>{ errors.login }</Alert>
             </Form.Group>
             <Form.Group>
               <Form.Check type="checkbox" label="Zapamiętaj mnie!"/>

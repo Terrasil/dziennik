@@ -57,5 +57,5 @@ Celem projektu jest łatwiejsza organizacja zajęć pozalekcyjnych - sprawne prz
   - [ ] Zmiana imienia i nazwiska
 #### **ADMINISTRATOR**
 - [x] Panel administratora
-- [ ] Rejestr zdarzeń
-- [ ] Backupy
+- [x] Rejestr zdarzeń
+- [x] Backupy

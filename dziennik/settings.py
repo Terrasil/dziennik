@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -37,6 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'django_admin_logs',
+    'smuggler',
 
     'rest_framework',
     'rest_framework.authtoken',
@@ -65,38 +69,13 @@ CORS_ORIGIN_WHITELIST = [
     'http://localhost:80',
     'http://localhost',
 ] 
-'''
-CORS_ORIGIN_REGEX_WHITELIST = [
-    'http://localhost:3000',
-    'http://localhost:80',
-]
-CORS_ALLOW_HEADERS = (
-    'csrftoken',
-    'content-type',
-    'X-CSRFTOKEN'
-)
-CSRF_COOKIE_NAME = "csrftoken"
-CSRF_HEADER_NAME = 'X-CSRFTOKEN'
 
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.BasicAuthentication',
-        'rest_framework.authentication.TokenAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-    ],
-    # Use Django's standard `django.contrib.auth` permissions,
-    # or allow read-only access for unauthenticated users.
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
-    ]
-}
-'''
 ROOT_URLCONF = 'dziennik.urls'
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'dziennik/templates'),],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -122,6 +101,18 @@ DATABASES = {
     }
 }
 
+## Zewnętrzna baza danych MySQL
+'''
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql', 
+        'NAME': '',
+        'USER': '',
+        'PASSWORD': '',
+        'HOST': '',
+        'PORT': '3306',
+    }
+ }'''
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
@@ -145,7 +136,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'pl-pl'
 
 TIME_ZONE = 'UTC'
 
@@ -160,6 +151,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = str(BASE_DIR.joinpath('static'))
 
 # Change django-auth User model to customize model
 

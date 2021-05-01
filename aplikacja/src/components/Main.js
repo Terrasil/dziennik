@@ -3,7 +3,8 @@ import Header from './Header';
 import  { Redirect } from 'react-router-dom'
 import Schedule from './Schedule';
 
-const Main = (props) => {
+function Main(props){
+  console.log(props.userdata)
   return (
     <>
       <Header userdata={props.userdata} csrftoken={props.csrftoken}/>

@@ -25,7 +25,9 @@ router.register('user-register', UserRegisterViewSet)
 router.register('users', UsersViewSet)
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    
+    path('panel/admin/', include('smuggler.urls')),
+    path('panel/admin/', admin.site.urls),
     path('api/', include(router.urls)),
     path('auth/', obtain_auth_token)
 ]

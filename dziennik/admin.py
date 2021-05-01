@@ -1,8 +1,8 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-
+from django.contrib.auth.models import Group
 from .forms import CustomUserChangeForm, CustomUserCreationForm
-from .models import CustomUser
+from .models import CustomUser, Institution, Employee, Activity, Child, Assignment, Attendance
 
 class UserAdminConfig(UserAdmin):
     model = CustomUser
@@ -24,4 +24,16 @@ class UserAdminConfig(UserAdmin):
     )
 
 
+class ExampleAdmin(admin.ModelAdmin):
+    change_list_template = 'smuggler/change_list.html'
+
 admin.site.register(CustomUser, UserAdminConfig)
+admin.site.register(Institution)
+admin.site.register(Employee)
+admin.site.register(Activity)
+admin.site.register(Child)
+admin.site.register(Assignment)
+admin.site.register(Attendance)
+
+# Nie korzystamy z grup
+admin.site.unregister(Group)

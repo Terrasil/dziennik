@@ -3,7 +3,7 @@ import  { Redirect } from 'react-router-dom'
 import { Navbar, Nav } from 'react-bootstrap';
 import ProfileAvatar from './../img/man.svg'
 
-const Header = (props) => {
+function Header(props){
 
     // Wylogowanie użytkownika
     const logout = () =>{
