@@ -29,33 +29,42 @@ function App(){
     setSessionID(getCookie('sessionid'))
   }
 
+  const loadLocalStorage = () => {
+    const localStoredCSRFToken = localStorage.getItem('csrftoken')
+    setCSRFToken(localStoredCSRFToken)
+    const localStoredUserData = localStorage.getItem('userdata')
+    setUserData(localStoredUserData)
+  }
+
   // Ustawianie wartośći do useState otrzymane z innych komponentów
-  const getCSRFToken = (csrftoken) => {
-    setCSRFToken(csrftoken)
+  const getCSRFToken = (_csrftoken) => {
+    setCSRFToken(_csrftoken)
   }
-  const getSessionID = (sessionid) => {
-    setSessionID(sessionid)
+  const getSessionID = (_sessionid) => {
+    setSessionID(_sessionid)
   }
-  const getUserData = (userdata) => {
-    setUserData(userdata)
+  const getUserData = (_userdata) => {
+    setUserData(_userdata)
+    console.table(_userdata)
   }
 
   // Wykonujemy odczyt cookie - wykonuje się jednokrotnie
   useEffect(() => {
     loadCookies()
+    loadLocalStorage()
   }, []);
 
   return (
     <Router>
       <Switch>
-        <Route exact path="/">
-            <Main csrftoken={csrftoken} userdata={userdata}/>
-        </Route>
         <Route path="/login">
             <Login csrftoken={csrftoken} getCSRFToken={getCSRFToken} getUserData={getUserData}/>
         </Route>
+        <Route exact path="/">
+            <Main/>
+        </Route>
         <Route path="/userslist">
-            <Users csrftoken={csrftoken}/>
+            <Users/>
         </Route>
       </Switch>
     </Router>

@@ -45,8 +45,9 @@ function Login(props){
       }
     }else{
       // Udane otrzymanie CSRFTokena
-      // Zapisujemy odrazu nasz CSRFToken do cookies
+      // Zapisujemy odrazu nasz CSRFToken do cookies oraz local storage
       document.cookie = "csrftoken="+data.token
+      window.localStorage.setItem( 'csrftoken', data.token )
       // Zwracamy token
       return {
         token:data.token, 
@@ -74,9 +75,12 @@ function Login(props){
       }
     }else{
       // Udane otrzymanie danych o użytkowniku
+      // Zapisujemy dane o użytkowniku do local storage
+      window.localStorage.setItem( 'userdata', JSON.stringify(data).toString() )
+      console.log(data)
       // Zwracam informacje o otrzymanym uzytkowniku (JSON)
       return {
-        userdata:data, 
+        userdata:JSON.stringify(data).toString(), 
         received:true
       }
     }

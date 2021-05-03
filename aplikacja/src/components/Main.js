@@ -5,31 +5,11 @@ import Schedule from './Schedule';
 
 function Main(props){
   
-  const [csrftoken, setCSRFToken] = useState(undefined);
-  const [sessionid, setSessionID] = useState(undefined);
-  const [userdata, setUserData] = useState(undefined);
-
-  useEffect(() => {
-    setCSRFToken(props.csrftoken)
-    setUserData(props.userdata)
-  }, []);
-
   // Odsyła do logowania jeżeli nie jest ustawiony csrftoken
-  const redirect = () => {
-    if (!!csrftoken) {
-      return <Redirect to='/' />
-    }
-  }
-
-  const removeData = () => {
-    setCSRFToken(undefined)
-    setUserData(undefined)
-  }
 
   return (
-    <>
-      { redirect() }
-      <Header userdata={props.userdata} csrftoken={props.csrftoken}/>
+    <> 
+      <Header/>
       <main className="main col-12" style={{top:'3.5rem'}}>
         <Schedule/>
         <h4>Main</h4>
