@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Login from './components/Login';
 import Users from './components/Users';
@@ -7,9 +7,9 @@ import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 
 function App(){
 
-  const [csrftoken, setCSRFToken] = useState('');
-  const [sessionid, setSessionID] = useState('');
-  const [userdata, setUserData] = useState('');
+  const [csrftoken, setCSRFToken] = useState(undefined);
+  const [sessionid, setSessionID] = useState(undefined);
+  const [userdata, setUserData] = useState(undefined);
   
   // Odczytywanie wartości z cookie
   const getCookie = (name) => {

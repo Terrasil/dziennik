@@ -5,7 +5,8 @@ from rest_framework import serializers
 class UserRegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_user_model()
-        fields = ['username', 'password', 'first_name','last_name','email']
+        # Dane jakie potrzebujemy do zarejestrowania użytkownika
+        fields = ['username', 'password', 'first_name', 'last_name', 'email']
         extra_kwargs = {
             'username': {'write_only': True, 'required': True},
             'password': {'write_only': True, 'required': True},
@@ -21,4 +22,5 @@ class UserRegisterSerializer(serializers.ModelSerializer):
 class UsersSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_user_model()
+        # Dane jakie potrzebujemy pobrać o uzytkowniku
         fields = ['id', 'username', 'first_name', 'last_name', 'email', 'role']

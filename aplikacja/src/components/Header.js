@@ -13,7 +13,7 @@ function Header(props){
         // Usunięcie informacji o sessionid
         document.cookie = "sessionid=; max-age=-1;";
         // Odświerzenie strony
-        document.location.reload(true)
+        return <Redirect to='/login' />
     }
 
     return (
@@ -26,7 +26,7 @@ function Header(props){
                     height="30"
                     className="d-inline-block align-top bg-primary rounded-circle mr-2"
                 />
-                { props.csrftoken === '' ? 'Nie zalogowano' : props.userdata ? props.userdata.username : 'Brk nazwy użytkownika' }
+                { props.csrftoken === '' ? 'Nie zalogowano' : props.userdata ? props.userdata[0].username : 'Brk nazwy użytkownika' }
             </Navbar.Brand>
             <Navbar.Toggle aria-controls="responsive-navbar-nav" style={{border: 'none'}}/>
             <Navbar.Collapse id="responsive-navbar-nav">

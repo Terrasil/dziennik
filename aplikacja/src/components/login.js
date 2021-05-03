@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import  { Redirect } from 'react-router-dom'
+import React, { useEffect, useState } from 'react';
+import  { Redirect } from 'react-router-dom';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Image from 'react-bootstrap/Image'
@@ -25,67 +25,98 @@ function Login(props){
 
   const [ form, setForm ] = useState({})
   const [ errors, setErrors ] = useState({})
-  const [ receivetoken, setReceiveToken ] = useState({})
-  const [ receiveuserdata, setReceiveUserData ] = useState({})
+  const [ receivetoken, setReceiveToken ] = useState(false)
+  const [ receiveuserdata, setReceiveUserData ] = useState(false)
+
+  // Pobieranie CSRFToken'a z Django
+  const receiveToken = async () => {
+    const response = await fetch('http://localhost:8000/auth/', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(form) // Dane z formularza
+    }).catch( error => console.error(error))
+    const data = await response.json()
+    if(!!data.non_field_errors){
+      // Nieudane otrzymanie CSRFTokena
+      // Zwracamy nic
+      return {
+        token:undefined, 
+        received:false
+      }
+    }else{
+      // Udane otrzymanie CSRFTokena
+      // Zapisujemy odrazu nasz CSRFToken do cookies
+      document.cookie = "csrftoken="+data.token
+      // Zwracamy token
+      return {
+        token:data.token, 
+        received:true
+      }
+    }
+  }
 
   // Pobieranie informacji o uzytkowniku z Django
-  const userData = (token) => {
-    // Adres email jest unikatowy dlatego szukamy danych o użytkowniku po 'email'
-    fetch('http://localhost:8000/api/users/?email='+form.username, {
+  const receiveUserData = async (token) => {
+    const response = await fetch('http://localhost:8000/api/users/?token='+token, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Token ${token}` // Musimy podać nasz CSRFToken aby otrzymać odpowiedź
       }
-    })
-    .then( data => data.json())
-    .then(
-      data => {
-        // Jeżeli się nie powiedzie otrzymamy {detail: 'wiadomość o błędzie'}
-        if(data.detail){
-          // Nieudane otrzymanie danych o użytkowniku
-          setReceiveUserData(false)
-          // Zwracam pustą listę/tablicę
-          return []
-        }else{
-          // Udane otrzymanie danych o użytkowniku
-          setReceiveUserData(true)
-          // Zwracam informacje o otrzymanym uzytkowniku (JSON)
-          return data
-        }
+    }).catch( error => console.error(error))
+    const data = await response.json()
+    if(!!data.detail){
+      // Nieudane otrzymanie danych o użytkowniku
+      // Zwracamy nic
+      return {
+        userdata:undefined, 
+        received:false
       }
-    )
-    .catch( error => console.error(error))
+    }else{
+      // Udane otrzymanie danych o użytkowniku
+      // Zwracam informacje o otrzymanym uzytkowniku (JSON)
+      return {
+        userdata:data, 
+        received:true
+      }
+    }
   }
+  
 
   // Logowanie
-  const login = (event) => {
-    // Pobieramy CSRFToken z Django
-    fetch('http://localhost:8000/auth/', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify(form) // Dane z formularza
-    })
-    .then( data => data.json())
-    .then(
-      data => {
-        // Jeżeli się nie powiedzie otrzymamy {detail: 'wiadomość o błędzie'}
-        if(data.detail){
-          // Nieudane otrzymanie CSRFTokena
-          setReceiveToken(false)
-        }else{
-          // Udane otrzymanie CSRFTokena
-          setReceiveToken(true)
-          // Zwracamy token do Aplikacji
-          props.getCSRFToken(data.token);
-          // Zwracamy informacje o użytkowniku do Aplikacji
-          props.getUserData(userData(data.token));
-          // Zapisujemy odrazu nasz CSRFToken do cookies
-          document.cookie = "csrftoken="+data.token
-        }
-      }
-    )
-    .catch( error => console.error(error))
+  const login = async () => {
+    // Zwracamy token do Aplikacji
+    const receivedToken = await receiveToken()
+
+    // Zwracamy informacje o użytkowniku do Aplikacji
+    const receivedUserData = await receiveUserData(receivedToken.token)
+
+    return {
+      fetchToken: receivedToken,
+      fetchUserData: receivedUserData
+    }
+  }
+  
+  // Metoda wykonywania po przycisnięciu 'Zaloguj'
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+
+    // Logowanie
+    const loginResult = await login()
+    
+    // Sprawdzenie czy token został otrzymany
+    await setReceiveToken(loginResult.fetchToken.received)
+    // Przekazanie tokenu do aplikacji
+    props.getCSRFToken(loginResult.fetchToken.token) 
+
+    // Sprawdzenie czy dane użytkownika zostały otrzymane
+    await setReceiveUserData(loginResult.fetchUserData.received)
+    // Przekazanie danych użytkownika do aplikacji
+    props.getUserData(loginResult.fetchUserData.userdata)
+
+    // Weryfikacja błędów
+    const newErrors = validation()
+    setErrors(newErrors)
   }
 
   // Pobieranie informacji z formularza logowania
@@ -100,51 +131,59 @@ function Login(props){
       [field]: null
     })
   }
-  
-  // Metoda wykonywania po przycisnięciu 'Zaloguj'
-  const handleSubmit = e => {
-    e.preventDefault()
-    const newErrors = findFormErrors()
-    // Ustawiamy powiadomienia o błędach w Form.Control.Feedback
-    if ( Object.keys(newErrors).length > 0 ) {
-      setErrors(newErrors)
-      // Wystpiły błędy
-      return false
-    } else {
-      // Można się zalogować
-      login()
-      return true
-    }
-  }
 
   // Walidacja formularza
-  const findFormErrors = () => {
+  const validation = () => {
     const { username, password } = form
     const newErrors = {}
 
+    let formValidated = true
+
     // Username errory
     // Nie podano email'a (username)
-    if ( !username || username === '' ) newErrors.username = 'Podaj adres email!'
-    // Zły format/pattern email'a
-    else if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(username)) newErrors.username = 'Podano zły format! \'example@mail.com\''
+    if ( !username || username === '' ) {
+      formValidated = false
+      newErrors.username = 'Podaj adres email!'
+    }
+    // Zły format/pattern email'a - /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    else if(!/\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*/.test(username)) {
+      formValidated = false 
+      newErrors.username = 'Podano zły format! \'example@mail.com\''
+    }
 
     // Password errory
     // Nie podano hasła
-    if ( !password || password === '' ) newErrors.password = 'Podaj hasło!'
+    if ( !password || password === '' ){
+      formValidated = false  
+      newErrors.password = 'Podaj hasło!'
+    }
     // Hasło zakrótkie (min. 8 znaków)
-    else if(password.length < 8) newErrors.password = 'Podano zakrótkie hasło!'
+    else if(password.length < 8){
+      formValidated = false  
+      newErrors.password = 'Podano zakrótkie hasło!'
+    }
 
     // Nieudane logowanie
-    // Nie otrzymano csrftokena
-    if ( !receivetoken ) newErrors.login = 'Nazwa użytkownika i hasło nie zgadzają się. Sprawdź jeszcze raz i spróbuj ponownie.'
-    // Nie otrzymano informacji o użytkowniku
-    if ( !receiveuserdata ) newErrors.login = 'Nazwa użytkownika lub hasło nie zgadzają się. Sprawdź jeszcze raz i spróbuj ponownie.'
+    // Sprawdzenie poprawnego uzupełniena formularza
+    if (formValidated){
+      // Nie otrzymano csrftokena
+      if ( !receivetoken ) newErrors.login = 'Nazwa użytkownika i hasło nie zgadzają się. Sprawdź jeszcze raz i spróbuj ponownie.'
+      // Nie otrzymano informacji o użytkowniku
+      if ( !receiveuserdata ) newErrors.login = 'Nazwa użytkownika lub hasło nie zgadzają się. Sprawdź jeszcze raz i spróbuj ponownie.'
+    }
 
     return newErrors
   }
 
+  const redirect = () => {
+    if (!!props.csrftoken) {
+      return <Redirect to='/' />
+    }
+  }
+  
   return (
     <>
+      { redirect() }
       <div className="container h-100">
         <div className="row h-100 justify-content-center align-items-center">
           <Form className="col-md-6">
