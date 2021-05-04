@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom";
 import Login from './components/Login';
 import Users from './components/Users';
 import Main from './components/Main';
+import RegisterPerson from './components/RegisterPerson'
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 
 function App(){
@@ -62,6 +63,12 @@ function App(){
         </Route>
         <Route exact path="/">
             <Main/>
+        </Route>
+        <Route path="/register/person">
+            <RegisterPerson/>
+        </Route>
+        <Route path="/register">
+          <Redirect to='/register/person'/>
         </Route>
         <Route path="/userslist">
             <Users/>

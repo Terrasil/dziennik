@@ -18,6 +18,8 @@ function Header(props){
         document.cookie = "sessionid=; max-age=-1;";
         // Usunięcie informacji o użytkowniku
         localStorage.removeItem('userdata');
+        // Upewnienie się że wszystko wyczyszczono
+        localStorage.clear()
         // Odświerzenie strony
         window.location.reload()
     }
@@ -44,7 +46,7 @@ function Header(props){
                         height="30"
                         className="d-inline-block align-top bg-primary rounded-circle mr-2"
                     />
-                    { _csrftoken === undefined ? 'Nie zalogowano' : _userdata ? _userdata.username : 'Brk nazwy użytkownika' }
+                    { _csrftoken === undefined ? 'Nie zalogowano' : _userdata ? _userdata.username : 'Brak nazwy użytkownika' }
                 </Navbar.Brand>
                 <Navbar.Toggle aria-controls="responsive-navbar-nav" style={{border: 'none'}}/>
                 <Navbar.Collapse id="responsive-navbar-nav">

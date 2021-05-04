@@ -5,22 +5,7 @@ import Button from 'react-bootstrap/Button';
 import Image from 'react-bootstrap/Image'
 import Logo from '../img/logo.png'
 import { Alert } from 'react-bootstrap';
-/*
-register = event => {
-    fetch('http://localhost:8000/api/users/', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify(this.state.credentials)
-    })
-    .then( data => data.json())
-    .then(
-      data => {
-        console.log(data.token);
-      }
-    )
-    .catch( error => console.error(error))
-  }
-*/
+
 function Login(props){
 
   const [ form, setForm ] = useState({})
@@ -222,7 +207,7 @@ function Login(props){
               <Button className="rounded-pill px-5" type='submit' onClick={ handleSubmit }>Zaloguj</Button>
             </Form.Group>
             <Form.Group className="text-center">
-              Nie posiadasz konta? <a href="{%url 'signup'%}" id="signup">Zarejestruj się</a>
+              Nie posiadasz konta? <a href="../register" id="signup">Zarejestruj się</a>
             </Form.Group>
           </Form>
         </div>
