@@ -204,7 +204,7 @@ function Login(props){
               <Form.Check type="checkbox" label="Zapamiętaj mnie!"/>
             </Form.Group>
             <Form.Group className="text-center">
-              <Button className="rounded-pill px-5" type='submit' onClick={ handleSubmit }>Zaloguj</Button>
+              <Button className="rounded-pill col-6" type='submit' onClick={ handleSubmit }>Zaloguj</Button>
             </Form.Group>
             <Form.Group className="text-center">
               Nie posiadasz konta? <a href="../register" id="signup">Zarejestruj się</a>

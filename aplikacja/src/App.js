@@ -65,7 +65,7 @@ function App(){
             <Main/>
         </Route>
         <Route path="/register/person">
-            <RegisterPerson/>
+            <RegisterPerson csrftoken={csrftoken}/>
         </Route>
         <Route path="/register">
           <Redirect to='/register/person'/>

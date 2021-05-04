@@ -3,6 +3,7 @@ import  { Redirect } from 'react-router-dom'
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Image from 'react-bootstrap/Image'
+import Logo from '../img/logo.png'
 import { Alert, InputGroup, ProgressBar } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUser, faUniversity } from '@fortawesome/free-solid-svg-icons'
@@ -55,6 +56,25 @@ register = event => {
 
     let formValidated = true
 
+    // FirstName errory
+    // Nie podano imienia
+    if ( !firstname || firstname === '' ) {
+      formValidated = false
+      newErrors.firstname = 'Podaj imię!'
+    }
+    
+    // LastName errory
+    // Nie podano nazwiska
+    if ( !lastname || lastname === '' ) {
+      formValidated = false
+      newErrors.lastname = 'Podaj nazwisko!'
+    }
+    // Zły format nazwiska
+    if( !/^([a-zA-ZęółśążźćńĘÓŁŚĄŻŹĆŃ][a-zA-ZęółśążźćńĘÓŁŚĄŻŹĆŃ\'\-]+([\ a-zA-ZęółśążźćńĘÓŁŚĄŻŹĆŃ][a-zA-ZęółśążźćńĘÓŁŚĄŻŹĆŃ\'\-]+)*).{1,}/.test(lastname)){
+      formValidated = false
+      newErrors.lastname = 'Podano błędne nazwisko!'
+    }
+
     // Email errory
     // Nie podano email'a
     if ( !email || email === '' ) {
@@ -73,26 +93,33 @@ register = event => {
       formValidated = false
       newErrors.password = 'Podaj hasło!'
     }
-    // Hasło zakrótkie (min. 8 znaków)
-    else if(password.length < 8) {
-      formValidated = false
-      newErrors.password = 'Podano zakrótkie hasło!'
+    //const moderate = /(?=.*[A-Z])(?=.*[a-z]).{5,}|(?=.*[\d])(?=.*[a-z]).{5,}|(?=.*[\d])(?=.*[A-Z])(?=.*[a-z]).{5,}/g;
+  //const strong = /(?=.*[A-Z])(?=.*[a-z])(?=.*[\d]).{7,}|(?=.*[\!@#$%^&*()\\[\]{}\-_+=~`|:;"'<>,./?])(?=.*[a-z])(?=.*[\d]).{7,}/g; //znak
+  //const extraStrong = /(?=.*[A-Z])(?=.*[a-z])(?=.*[\d])(?=.*[\!@#$%^&*()\\[\]{}\-_+=~`|:;"'<>,./?]).{9,}/g; //znak
+    else{
+      newErrors.password = ''
+      // Hasło zakrótkie (min. 8 znaków)
+      if(password.length < 8) {
+        formValidated = false
+        newErrors.password += `Hasło musi zkładać się z 8-u znaków!\n\n`
+      }
+      // Brak wielkiej litery
+      if(!/^(?=.*?[A-ZĘÓŁŚĄŻŹĆŃ])$/.test(password)) {
+        formValidated = false
+        newErrors.password += `Hasło musi zawierać dużą literę!\n\n`
+      }
     }
 
-    // Siła hasła
-    newErrors.passwordstrength = 80
-    if(newErrors.passwordstrength<50){
+    // RePassword errory
+    // Hasła się nie zgadzają
+    if ( password !== repassword ) {
       formValidated = false
-      newErrors.passwordstrengthlabel = 'Słabe'
-      newErrors.passwordstrengthcolor = 'danger'
+      newErrors.repassword = 'Hasła się nie zgadzają!'
     }
-    else if(newErrors.passwordstrength >= 50){
-      newErrors.passwordstrengthlabel = 'Umiarkowane'
-      newErrors.passwordstrengthcolor = 'warning'
-    }
-    else{
-      newErrors.passwordstrengthlabel = 'Silne'
-      newErrors.passwordstrengthcolor = 'success'
+    // Nie powtórzono hasła
+    if ( !repassword || repassword === '' ) {
+      formValidated = false
+      newErrors.repassword = 'Powtórz hasło!'
     }
 
     // Phone errory
@@ -124,87 +151,107 @@ register = event => {
     return newErrors
   }
 
+  const redirect = () => {
+    if (!!props.csrftoken) {
+      return <Redirect to='/' />
+    }
+  }
+  
+  // Logo nad formularzem
+  //<Form.Group className="text-center pb-4 container-fluid">
+  //  <Image src={Logo} style={{width:'50%', padding:'1rem'}}/>
+  //</Form.Group>
+
   return (
     <>
+      { redirect() }
       <div className="container h-100">
         <div className="row h-100 justify-content-center align-items-center">
           <Form className="col-md-6">
             <Form.Group className="text-center pb-4 container-fluid">
-              <div class="row align-items-start">
-                <div class="col" style={{paddingTop:'1rem', paddingBottom:'1rem',borderBottom:'0.5rem solid dodgerblue'}}>
+              <div className="row align-items-start">
+                <div className="col" style={{paddingTop:'1rem', paddingBottom:'1rem',borderBottom:'0.5rem solid dodgerblue'}}>
                   <FontAwesomeIcon style={{fontSize: 'min(25vw, 900%)'}} color="dodgerblue" icon={faUser} />
                 </div>
-                <div class="col" style={{paddingTop:'1rem', paddingBottom:'1rem',borderBottom:'0.5rem solid transparent'}}>
-                  <FontAwesomeIcon style={{fontSize: 'min(25vw, 900%)'}} color="silver" icon={faUniversity} />
+                <div className="col" style={{paddingTop:'1rem', paddingBottom:'1rem',borderBottom:'0.5rem solid transparent'}}>
+                  <a href="../login" id="signup"><FontAwesomeIcon style={{fontSize: 'min(25vw, 900%)'}} color="silver" icon={faUniversity} /></a>
                 </div>
               </div>
             </Form.Group>
             <Form.Group>
               <Form.Label>Podaj imię</Form.Label>
-              <Form.Control 
-                type='text' name="firstname"
-                onChange={ e => setField('firstname', e.target.value) }
-                isInvalid={ !!errors.firstname }
-                isValid={ !errors.firstname }
-              />
-              <Form.Control.Feedback type='invalid'>{ errors.firstname }</Form.Control.Feedback>
+              <InputGroup className="mb-3">
+                <Form.Control 
+                  type='text' name="firstname"
+                  onChange={ e => setField('firstname', e.target.value) }
+                  isInvalid={ !!errors.firstname }
+                />
+                <Form.Control.Feedback type='invalid'>{ errors.firstname }</Form.Control.Feedback>
+              </InputGroup>
             </Form.Group>
             <Form.Group>
               <Form.Label>Podaj nazwisko</Form.Label>
-              <Form.Control 
-                type='text' name="lastname"
-                onChange={ e => setField('lastname', e.target.value) }
-                isInvalid={ !!errors.lastname }
-              />
-              <Form.Control.Feedback type='invalid'>{ errors.lastname }</Form.Control.Feedback>
+              <InputGroup className="mb-3">
+                <Form.Control 
+                  type='text' name="lastname"
+                  onChange={ e => setField('lastname', e.target.value) }
+                  isInvalid={ !!errors.lastname }
+                />
+                <Form.Control.Feedback type='invalid'>{ errors.lastname }</Form.Control.Feedback>
+              </InputGroup>
             </Form.Group>
             <Form.Group>
               <Form.Label>Adres Email</Form.Label>
               <InputGroup className="mb-3">
-                <InputGroup.Prepend>
-                  <InputGroup.Text id="basic-addon1">@</InputGroup.Text>
-                </InputGroup.Prepend>
                 <Form.Control 
                   type='email' name="email"
                   onChange={ e => setField('email', e.target.value) }
                   isInvalid={ !!errors.email }
                 />
+                <Form.Control.Feedback type='invalid'>{ errors.email }</Form.Control.Feedback>
               </InputGroup>
-              <Form.Control.Feedback type='invalid'>{ errors.email }</Form.Control.Feedback>
             </Form.Group>
             <Form.Group>
               <Form.Label>Hasło</Form.Label>
-              <Form.Control 
-                type='password' name="password"
-                onChange={ e => setField('password', e.target.value) }
-                isInvalid={ !!errors.password }
-              />
-              <ProgressBar className="mt-1" animated variant={errors.passwordstrengthcolor} label={errors.passwordstrengthlabel} now={errors.passwordstrength | 0} />
-              <Form.Control.Feedback type='invalid'>{ errors.password }</Form.Control.Feedback>
+              <InputGroup className="mb-3">
+                <Form.Control 
+                  type='password' name="password"
+                  onChange={ e => setField('password', e.target.value) }
+                  isInvalid={ !!errors.password }
+                  data-toggle="password"
+                />
+                <Form.Control.Feedback type='invalid'>{ errors.password }</Form.Control.Feedback>
+                <Form.Control.Feedback type='invalid'>{ errors.password }</Form.Control.Feedback>
+              </InputGroup>
             </Form.Group>
             <Form.Group>
               <Form.Label>Powtórz hasło</Form.Label>
-              <Form.Control 
-                type='password' name="repassword"
-                onChange={ e => setField('repassword', e.target.value) }
-                isInvalid={ !!errors.repassword }
-              />
-              <Form.Control.Feedback type='invalid'>{ errors.repassword }</Form.Control.Feedback>
+              <InputGroup className="mb-3">
+                <Form.Control 
+                  type='password' name="repassword"
+                  onChange={ e => setField('repassword', e.target.value) }
+                  isInvalid={ !!errors.repassword }
+                  data-toggle="repassword"
+                />
+                <Form.Control.Feedback type='invalid'>{ errors.repassword }</Form.Control.Feedback>
+              </InputGroup>
             </Form.Group>
             <Form.Group>
               <Form.Label>Numer telefonu <i style={{color:'gray'}}>(opcjonalnie)</i></Form.Label>
-              <Form.Control 
-                type='tel' name="phone"
-                onChange={ e => setField('phone', e.target.value) }
-                isInvalid={ !!errors.phone }
-              />
-              <Form.Control.Feedback type='invalid'>{ errors.phone }</Form.Control.Feedback>
+              <InputGroup className="mb-3">
+                <Form.Control 
+                  type='tel' name="phone"
+                  onChange={ e => setField('phone', e.target.value) }
+                  isInvalid={ !!errors.phone }
+                />
+                <Form.Control.Feedback type='invalid'>{ errors.phone }</Form.Control.Feedback>
+             </InputGroup>
             </Form.Group>
             <Form.Group>
               <Alert variant={'danger'} show={ !!errors.register } type='invalid'>{ errors.register }</Alert>
             </Form.Group>
             <Form.Group className="text-center pt-4">
-              <Button className="rounded-pill px-5" type='submit' onClick={ handleSubmit }>Dołącz za darmo</Button>
+              <Button className="rounded-pill col-6" type='submit' onClick={ handleSubmit }>Dołącz za darmo</Button>
             </Form.Group>
             <Form.Group className="text-center">
               Posiadasz juz konto? <a href="../../login" id="signup">Zaloguj się</a>
