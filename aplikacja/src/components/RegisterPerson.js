@@ -4,7 +4,7 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Image from 'react-bootstrap/Image'
 import Logo from '../img/logo.png'
-import { Alert, InputGroup, ProgressBar } from 'react-bootstrap';
+import { Alert, InputGroup, Modal } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUser, faUniversity } from '@fortawesome/free-solid-svg-icons'
 
@@ -12,23 +12,34 @@ function RegisterPerson(props){
 
   const [ form, setForm ] = useState({})
   const [ errors, setErrors ] = useState({})
+  const [ showmodal, setShowModal ] = useState(false)
 
-/*
-register = event => {
-    fetch('http://localhost:8000/api/users/', {
+  const register = async () => {
+    // Przygotowanie informacji o tworzonym użytkowniku
+    const registerData = {}
+    registerData.username = form.email
+    registerData.password = form.password
+    registerData.first_name = form.firstname
+    registerData.last_name = form.lastname
+    registerData.email = form.email
+    registerData.phone = form.phone
+    registerData.role = 'user'
+    // Wykonanie zapytania - rejestracji
+    const response = await fetch('http://localhost:8000/api/user-register/', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify(this.state.credentials)
-    })
-    .then( data => data.json())
-    .then(
-      data => {
-        console.log(data.token);
-      }
-    )
-    .catch( error => console.error(error))
+      body: JSON.stringify(registerData) // Przygotowane dane
+    }).catch( error => console.error(error))
+    const data = await response.json()
+    if(data?.email){
+      // Nieudana rejestracja
+      return 'Istnieje już użytkownik z podanym adresem email.'
+    }else{
+      // Udana rejestracja
+      return undefined
+    }
   }
-*/
+
   // Pobieranie informacji z formularza logowania
   const setField = (field, value) => {
     setForm({
@@ -43,20 +54,26 @@ register = event => {
   }
   
   // Metoda wykonywania po przycisnięciu 'Zaloguj'
-  const handleSubmit = e => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    const newErrors = validation()
+    const newErrors = await validation()
     setErrors(newErrors)
   }
 
   // Walidacja formularza
-  const validation = () => {
+  const validation = async () => {
     const { firstname, lastname, email, password, repassword, phone } = form
     const newErrors = {}
 
     let formValidated = true
 
     // FirstName errory
+    // Zły format nazwiska
+    //eslint-disable-next-line
+    if( !/^[A-ZĘÓŁŚĄŻŹĆŃ]+[a-zA-ZęółśążźćńĘÓŁŚĄŻŹĆŃ]{3,}$/.test(firstname)){
+      formValidated = false
+      newErrors.firstname = 'Podano błędne imie! Powinno zaczynać się z wielkiej litery i nie zawierac cyfr.'
+    }
     // Nie podano imienia
     if ( !firstname || firstname === '' ) {
       formValidated = false
@@ -64,15 +81,16 @@ register = event => {
     }
     
     // LastName errory
+    // Zły format nazwiska
+    //eslint-disable-next-line
+    if( !/^([A-ZĘÓŁŚĄŻŹĆŃ]+[a-zA-ZęółśążźćńĘÓŁŚĄŻŹĆŃ][a-zA-ZęółśążźćńĘÓŁŚĄŻŹĆŃ\'\-]+([\ a-zA-ZęółśążźćńĘÓŁŚĄŻŹĆŃ][a-zA-ZęółśążźćńĘÓŁŚĄŻŹĆŃ\'\-]+)*).{1,}/.test(lastname)){
+      formValidated = false
+      newErrors.lastname = 'Podano błędne nazwisko! Powinno zaczynać się z wielkiej litery i nie zawierac cyfr.'
+    }
     // Nie podano nazwiska
     if ( !lastname || lastname === '' ) {
       formValidated = false
       newErrors.lastname = 'Podaj nazwisko!'
-    }
-    // Zły format nazwiska
-    if( !/^([a-zA-ZęółśążźćńĘÓŁŚĄŻŹĆŃ][a-zA-ZęółśążźćńĘÓŁŚĄŻŹĆŃ\'\-]+([\ a-zA-ZęółśążźćńĘÓŁŚĄŻŹĆŃ][a-zA-ZęółśążźćńĘÓŁŚĄŻŹĆŃ\'\-]+)*).{1,}/.test(lastname)){
-      formValidated = false
-      newErrors.lastname = 'Podano błędne nazwisko!'
     }
 
     // Email errory
@@ -82,6 +100,7 @@ register = event => {
       newErrors.email = 'Podaj adres email!'
     }
     // Zły format/pattern email'a
+    //eslint-disable-next-line
     else if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       formValidated = false
       newErrors.email = 'Podano zły format! \'example@mail.com\''
@@ -93,20 +112,31 @@ register = event => {
       formValidated = false
       newErrors.password = 'Podaj hasło!'
     }
-    //const moderate = /(?=.*[A-Z])(?=.*[a-z]).{5,}|(?=.*[\d])(?=.*[a-z]).{5,}|(?=.*[\d])(?=.*[A-Z])(?=.*[a-z]).{5,}/g;
-  //const strong = /(?=.*[A-Z])(?=.*[a-z])(?=.*[\d]).{7,}|(?=.*[\!@#$%^&*()\\[\]{}\-_+=~`|:;"'<>,./?])(?=.*[a-z])(?=.*[\d]).{7,}/g; //znak
-  //const extraStrong = /(?=.*[A-Z])(?=.*[a-z])(?=.*[\d])(?=.*[\!@#$%^&*()\\[\]{}\-_+=~`|:;"'<>,./?]).{9,}/g; //znak
     else{
-      newErrors.password = ''
+      const passwordRegexValidations = []
       // Hasło zakrótkie (min. 8 znaków)
       if(password.length < 8) {
-        formValidated = false
-        newErrors.password += `Hasło musi zkładać się z 8-u znaków!\n\n`
+        passwordRegexValidations.push('Hasło musi zkładać się z 8-u znaków!')
       }
       // Brak wielkiej litery
-      if(!/^(?=.*?[A-ZĘÓŁŚĄŻŹĆŃ])$/.test(password)) {
+      //eslint-disable-next-line
+      if(!/\w*[A-ZĘÓŁŚĄŻŹĆŃ]\w*/g.test(password)) {
+        passwordRegexValidations.push('Hasło musi zawierać przynajmniej jedną dużą literę!')
+      }
+      // Brak cyfry
+      //eslint-disable-next-line
+      if(!/\w*[0-9]\w*/g.test(password)) {
+        passwordRegexValidations.push('Hasło musi zawierać przynajmniej jedną cyfrę!')
+      }
+      // Brak znaków specjalnych
+      //eslint-disable-next-line
+      if(!/\w*[\!@#$%^&*()\\[\]{}\-_+=~`|:;"'<>,./?]\w*/g.test(password)) {
+        passwordRegexValidations.push('Hasło musi zawierać przynajmniej jedn znak specjalny!')
+      }
+      // Jeżeli cokolwiek dodano do passwordRegexValidations - ustawiamy jako error
+      if(passwordRegexValidations.length > 0){
         formValidated = false
-        newErrors.password += `Hasło musi zawierać dużą literę!\n\n`
+        newErrors.password = passwordRegexValidations
       }
     }
 
@@ -124,6 +154,7 @@ register = event => {
 
     // Phone errory
     // Jeżeli podamy numer telefonu to nalezy sprawdzić jego format
+    //eslint-disable-next-line
     if((phone && phone !== '' ) && !/^(\+{0,})(\d{0,})([(]{1}\d{1,3}[)]{0,}){0,}(\s?\d+|\+\d{2,3}\s{1}\d+|\d+){1}[\s|-]?\d+([\s|-]?\d+){1,2}(\s){0,}$/gm.test(phone)){
       // Obsługiwane formaty:
       // (123) 456-7890
@@ -144,8 +175,20 @@ register = event => {
       newErrors.phone = 'Zły format telefonu!'
     }
 
+    // Rejestracja
+    newErrors.register = undefined
     if(formValidated){
-      // register()
+      // Zwracanie odpowiedzi z zapytania do api
+      const registerReceive = await register()
+      if(registerReceive !== undefined){
+        // Wystąpił błąd
+        // Ustawiamy error do wyświetlenia
+        newErrors.register = registerReceive
+      }else{
+        // Nie wystąpił błąd
+        // Pokazanie modal'u
+        setShowModal(true)
+      }
     }
 
     return newErrors
@@ -156,6 +199,33 @@ register = event => {
       return <Redirect to='/' />
     }
   }
+
+  const modal = () => {
+    return (
+      <Modal
+        {...props}
+        size="md"
+        aria-labelledby="contained-modal-title-vcenter"
+        show={showmodal}
+        onHide={() => setShowModal(false)}
+        backdrop="static"
+        keyboard={false}
+        centered
+      >
+        <Modal.Header style={{border:'none'}} closeButton>
+          <Modal.Title id="contained-modal-title-vcenter">
+            Dziękujemy za rejestrację
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body style={{border:'none'}}>
+          <p>Wysłaliśmy wiadomość z linkiem aktywacyjnym na podany adres email w celu weryfikacji.</p>
+        </Modal.Body>
+        <Modal.Footer className="align-left" style={{border:'none'}}>
+          <a href="../../login" style={{float:'right'}} id="signup"><Button className="rounded-pill">Wróć do panelu logowania</Button></a>
+        </Modal.Footer>
+      </Modal>
+    )
+  }
   
   // Logo nad formularzem
   //<Form.Group className="text-center pb-4 container-fluid">
@@ -165,6 +235,7 @@ register = event => {
   return (
     <>
       { redirect() }
+      { modal() }
       <div className="container h-100">
         <div className="row h-100 justify-content-center align-items-center">
           <Form className="col-md-6">
@@ -220,8 +291,12 @@ register = event => {
                   isInvalid={ !!errors.password }
                   data-toggle="password"
                 />
-                <Form.Control.Feedback type='invalid'>{ errors.password }</Form.Control.Feedback>
-                <Form.Control.Feedback type='invalid'>{ errors.password }</Form.Control.Feedback>
+                <Form.Control.Feedback style={{color:'gray', display:'block'}}>Hasło musi składać się z 8-miu znaków i zawierac wielką literę, cyfrę oraz znak specjalny.</Form.Control.Feedback>
+                {
+                  errors.password?.map((suberror,index) => (
+                    <Form.Control.Feedback key={index} type='invalid'>{ suberror }</Form.Control.Feedback>
+                  ))  
+                }
               </InputGroup>
             </Form.Group>
             <Form.Group>

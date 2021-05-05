@@ -102,8 +102,8 @@ function Login(props){
     await setReceiveUserData(loginResult.fetchUserData.received)
     // Przekazanie danych użytkownika do aplikacji
     props.getUserData(loginResult.fetchUserData.userdata)
-
-    // Weryfikacja błędów
+  
+    // Ponowna weryfikacja błędów
     const newErrors = validation()
     setErrors(newErrors)
   }
@@ -135,6 +135,7 @@ function Login(props){
       newErrors.username = 'Podaj adres email!'
     }
     // Zły format/pattern email'a - /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    //eslint-disable-next-line
     else if(!/\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*/.test(username)) {
       formValidated = false 
       newErrors.username = 'Podano zły format! \'example@mail.com\''

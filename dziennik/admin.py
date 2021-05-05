@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import Group
 from .forms import CustomUserChangeForm, CustomUserCreationForm
-from .models import CustomUser, Institution, Employee, Activity, Child, Assignment, Attendance
+from .models import CustomUser, Institution, Employee, Activity, Child, Assignment, Attendance, UserActivate
 
 class UserAdminConfig(UserAdmin):
     model = CustomUser
@@ -14,7 +14,7 @@ class UserAdminConfig(UserAdmin):
     fieldsets = (
         (None, {'fields': ('email', 'username', 'first_name', 'last_name',)}),
         ('Permissions', {'fields': ('role',  'is_staff', 'is_active')}),
-        ('Personal', {'fields': ('about',)}),
+        ('Personal', {'fields': ('phone','about',)}),
     )
     add_fieldsets = (
         (None, {
@@ -34,6 +34,7 @@ admin.site.register(Activity)
 admin.site.register(Child)
 admin.site.register(Assignment)
 admin.site.register(Attendance)
+admin.site.register(UserActivate)
 
 # Nie korzystamy z grup
 admin.site.unregister(Group)

@@ -1,4 +1,5 @@
 from django.db import models
+from datetime import timedelta
 from django.utils import timezone
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
@@ -56,6 +57,17 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         verbose_name = "User"
         verbose_name_plural = "Users"
 
+class UserActivate(models.Model):
+    user_id = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    activate_code = models.CharField(max_length=64)
+    expiration_time = models.DateTimeField(default=timezone.now() + timedelta(days=1))
+    
+    def __str__(self):
+        return self.activate_code
+
+    class Meta:
+        verbose_name = "UserActivate"
+        verbose_name_plural = "UserActivations"
 
 class Institution(models.Model):
     user_id = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
