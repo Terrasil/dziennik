@@ -31,7 +31,7 @@ function Header(props){
     }
 
     useEffect(()=>{
-        console.log(_userdata)
+        //console.log(_userdata)
     }, [])
 
     return (

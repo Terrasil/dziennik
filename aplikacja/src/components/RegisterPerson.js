@@ -94,16 +94,16 @@ function RegisterPerson(props){
     }
 
     // Email errory
+    // Zły format/pattern email'a
+    //eslint-disable-next-line
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      formValidated = false
+      newErrors.email = 'Podano zły format! \'example@mail.com\''
+    }
     // Nie podano email'a
     if ( !email || email === '' ) {
       formValidated = false
       newErrors.email = 'Podaj adres email!'
-    }
-    // Zły format/pattern email'a
-    //eslint-disable-next-line
-    else if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      formValidated = false
-      newErrors.email = 'Podano zły format! \'example@mail.com\''
     }
 
     // Password errory

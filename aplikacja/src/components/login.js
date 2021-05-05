@@ -156,10 +156,10 @@ function Login(props){
     // Nieudane logowanie
     // Sprawdzenie poprawnego uzupełniena formularza
     if (formValidated){
-      // Nie otrzymano csrftokena
-      if ( !receivetoken ) newErrors.login = 'Nazwa użytkownika i hasło nie zgadzają się. Sprawdź jeszcze raz i spróbuj ponownie.'
-      // Nie otrzymano informacji o użytkowniku
-      if ( !receiveuserdata ) newErrors.login = 'Nazwa użytkownika lub hasło nie zgadzają się. Sprawdź jeszcze raz i spróbuj ponownie.'
+      // Nie otrzymano csrftokena lub nie otrzymano informacji o użytkowniku
+      if ( !receivetoken && !receiveuserdata ) newErrors.login = 'Nazwa użytkownika lub hasło nie zgadzają się. Upewnij się czy konto zostało aktywowane. Sprawdź jeszcze raz i spróbuj ponownie.' // dodać sprawdzenie aktywacji konta
+      // Nie otrzymano csrftokena lub nie otrzymano informacji o użytkowniku
+      //if ( !receivetoken && !receiveuserdata ) newErrors.login = 'Nazwa użytkownika lub hasło nie zgadzają się. Sprawdź jeszcze raz i spróbuj ponownie.'
     }
 
     return newErrors
