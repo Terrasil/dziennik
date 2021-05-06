@@ -25,7 +25,7 @@ function RegisterPerson(props){
     registerData.phone = form.phone
     registerData.role = 'user'
     // Wykonanie zapytania - rejestracji
-    const response = await fetch('http://localhost:8000/api/user-register/', {
+    const response = await fetch('http://localhost:8000/api/users-register/', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(registerData) // Przygotowane dane

@@ -20,7 +20,7 @@ Celem projektu jest łatwiejsza organizacja zajęć pozalekcyjnych - sprawne prz
   - [ ] Dzień
   - [ ] Tydzień
   - [ ] Miesiąć
-- [ ] Zapamiętanie użytkownika
+- [x] Zapamiętanie użytkownika
 - [x] Wylogowanie
 #### **UŻYTKOWNIK**
 - [ ] Rejestracja

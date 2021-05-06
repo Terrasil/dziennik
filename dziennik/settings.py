@@ -150,8 +150,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
-STATIC_URL = '/static/'
-STATIC_ROOT = str(BASE_DIR.joinpath('static'))
+STATIC_URL = '/dziennik/static/'
+STATIC_ROOT = str(BASE_DIR.joinpath('dziennik/static'))
 
 # Change django-auth User model to customize model
 

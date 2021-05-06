@@ -1,11 +1,17 @@
 from django.contrib.auth import get_user_model
+from django.core.mail import EmailMultiAlternatives
+from email.mime.image import MIMEImage
+from django.template.loader import render_to_string
 from rest_framework.authtoken.models import Token
 from rest_framework import serializers
-from django.core.mail import EmailMessage
 from .models import UserActivate
+from .settings import STATIC_ROOT
 
 import random
 import string
+import os
+import mimetypes
+mimetypes.add_type("image/svg+xml", ".svg", True)
 
 class UserRegisterSerializer(serializers.ModelSerializer):
     class Meta:
@@ -36,6 +42,17 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         UserActivate.objects.create(user_id=user,activate_code=generated_activate_key)
         # Stworzenie tokenu autoryzujacego dla uzytkownika
         Token.objects.create(user=user)
+
+        # Wysyłanie email'a
+        subject = 'Aktywacja konta w serwisie Dziennik.'
+        message = render_to_string('mail/activate.html', {
+            'user': user,
+            'activate_link': 'http://localhost:3000/activate/' + generated_activate_key
+        })
+        email = EmailMultiAlternatives( subject, message, from_email='Dziennik', to=[user.email])
+        email.mixed_subtype = 'related'
+        email.attach_alternative(message, "text/html")
+        email.send()
 
         return user
 

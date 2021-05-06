@@ -8,10 +8,23 @@ import { Alert } from 'react-bootstrap';
 
 function Login(props){
 
+  // Odczytywanie wartości z cookie
+  const getCookie = (name) => {
+    var str = document.cookie
+    str = str.split('; ');
+    var result = {};
+    for (var i = 0; i < str.length; i++) {
+        var cur = str[i].split('=');
+        result[cur[0]] = cur[1];
+    }
+    return result[name] ? result[name] : ''
+  }
+
   const [ form, setForm ] = useState({})
   const [ errors, setErrors ] = useState({})
   const [ receivetoken, setReceiveToken ] = useState(false)
   const [ receiveuserdata, setReceiveUserData ] = useState(false)
+  const [ rememberme, setRememberMe ] = useState(getCookie('rememberme'))
 
   // Pobieranie CSRFToken'a z Django
   const receiveToken = async () => {
@@ -73,9 +86,19 @@ function Login(props){
   
 
   // Logowanie
-  const login = async () => {
-    // Zwracamy token do Aplikacji
-    const receivedToken = await receiveToken()
+  const login = async (token) => {
+    // Tymczasowy kontener
+    let _receivedToken = {}
+    if(token === undefined){
+      // Jeżeli nie podano tokenu jako argumenu
+      // Zwracamy token do Aplikacji
+      _receivedToken = await receiveToken()
+    }else{
+      // Podano token jako argument więc ustawiamy go
+      _receivedToken = {token: token, received: undefined}
+    }
+
+    const receivedToken = _receivedToken
 
     // Zwracamy informacje o użytkowniku do Aplikacji
     const receivedUserData = await receiveUserData(receivedToken.token)
@@ -91,7 +114,10 @@ function Login(props){
     e.preventDefault()
 
     // Logowanie
-    const loginResult = await login()
+    const loginResult = await login(undefined)
+
+    // Zapamiętywanie użytkownika
+    document.cookie = "rememberme="+rememberme+";max-age="+Number.MAX_SAFE_INTEGER
     
     // Sprawdzenie czy token został otrzymany
     await setReceiveToken(loginResult.fetchToken.received)
@@ -119,6 +145,11 @@ function Login(props){
       ...errors,
       [field]: null
     })
+  }
+
+  // Ustawienie automatycznego logowania 
+  const rememberMe = (e) => {
+    setRememberMe(e.target.checked)
   }
 
   // Walidacja formularza
@@ -170,6 +201,13 @@ function Login(props){
       return <Redirect to='/' />
     }
   }
+
+  useEffect(()=>{
+    console.log(getCookie('rememberme') === 'true')
+    if(getCookie('rememberme') === 'true'){
+      login(getCookie('csrftoken'))
+    }
+  },[])
   
   return (
     <>
@@ -202,7 +240,7 @@ function Login(props){
               <Alert variant={'danger'} show={ !!errors.login } type='invalid'>{ errors.login }</Alert>
             </Form.Group>
             <Form.Group>
-              <Form.Check type="checkbox" label="Zapamiętaj mnie!"/>
+              <Form.Check type="checkbox" label="Zapamiętaj mnie!" onChange={ e => rememberMe(e) }/>
             </Form.Group>
             <Form.Group className="text-center">
               <Button className="rounded-pill col-6" type='submit' onClick={ handleSubmit }>Zaloguj</Button>

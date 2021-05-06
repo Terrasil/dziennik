@@ -18,11 +18,11 @@ from django.urls import path, include
 from rest_framework import routers
 from rest_framework.authtoken.views import obtain_auth_token
 
-from .views import UserRegisterViewSet, UsersViewSet
+from .views import UserRegisterViewSet, UsersViewSet, UsersActivatedViewSet
 
 router = routers.DefaultRouter()
-router.register('user-register', UserRegisterViewSet)
 router.register('users', UsersViewSet)
+router.register('users-register', UserRegisterViewSet)
 
 urlpatterns = [
     

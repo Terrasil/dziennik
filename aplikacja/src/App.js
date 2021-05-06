@@ -9,13 +9,12 @@ import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 function App(){
 
   const [csrftoken, setCSRFToken] = useState(undefined);
-  const [sessionid, setSessionID] = useState(undefined);
   const [userdata, setUserData] = useState(undefined);
   
   // Odczytywanie wartości z cookie
   const getCookie = (name) => {
     var str = document.cookie
-    str = str.split(', ');
+    str = str.split('; ');
     var result = {};
     for (var i = 0; i < str.length; i++) {
         var cur = str[i].split('=');
@@ -27,7 +26,6 @@ function App(){
   // Ustawianie - o ile istnieją - wartość z csrftoken oraz sessionid
   const loadCookies = () => {
     setCSRFToken(getCookie('csrftoken'))
-    setSessionID(getCookie('sessionid'))
   }
 
   const loadLocalStorage = () => {
@@ -41,12 +39,8 @@ function App(){
   const getCSRFToken = (_csrftoken) => {
     setCSRFToken(_csrftoken)
   }
-  const getSessionID = (_sessionid) => {
-    setSessionID(_sessionid)
-  }
   const getUserData = (_userdata) => {
     setUserData(_userdata)
-    console.table(_userdata)
   }
 
   // Wykonujemy odczyt cookie - wykonuje się jednokrotnie

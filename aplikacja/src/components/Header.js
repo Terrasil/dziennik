@@ -6,7 +6,6 @@ import ProfileAvatar from './../img/man.svg'
 function Header(props){
 
     const _csrftoken = localStorage.getItem('csrftoken') || undefined
-    const _sessionid = localStorage.getItem('sessionid') || undefined
     const _userdata = JSON.parse(localStorage.getItem('userdata')) ? JSON.parse(localStorage.getItem('userdata'))[0] : undefined
     // Wylogowanie użytkownika
     const logout = () =>{
@@ -14,8 +13,8 @@ function Header(props){
         // Usunięcie informacji o csrftokenie
         document.cookie = "csrftoken=; max-age=-1;";
         localStorage.removeItem('csrftoken');
-        // Usunięcie informacji o sessionid
-        document.cookie = "sessionid=; max-age=-1;";
+        // Usunięcie informacji o zapamiętaniu
+        document.cookie = "rememberme=; max-age=-1;";
         // Usunięcie informacji o użytkowniku
         localStorage.removeItem('userdata');
         // Upewnienie się że wszystko wyczyszczono
@@ -38,7 +37,7 @@ function Header(props){
         <>
             { redirect() }
             <Navbar collapseOnSelect expand="lg" bg="light" fixed="top" variant="light">
-                <Navbar.Brand href="#home">
+                <Navbar.Brand>
                     <img
                         alt="profile-avatar-man"
                         src={ProfileAvatar}
