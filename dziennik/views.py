@@ -3,7 +3,7 @@ from django.http import JsonResponse
 from django.core.mail import EmailMessage
 from rest_framework.authtoken.models import Token
 from rest_framework import viewsets, permissions, exceptions
-from .serializers import UserRegisterSerializer, UsersSerializer
+from .serializers import UserRegisterSerializer, UsersSerializer, UsersActivatedSerializer
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
@@ -64,16 +64,17 @@ class UsersActivatedViewSet(viewsets.ModelViewSet):
 
     # Lista serializerii dla danech typów zapytań
     serializer_classes = {
-        'GET': UsersSerializer,
+        'GET': UsersActivatedSerializer,
     }
 
     # Jeżeli danego zapytania nie ma na liście serializer_classes to wykorzystany będzie domyślny
-    default_serializer_class = UsersSerializer
+    default_serializer_class = UsersActivatedSerializer
     
     # Metoda przygotowuje nam dane do zwrócenia - my potrzebujemy informacji o jednym użytkowniku
     def get_queryset(self):
         # Zwracamy uzytkownika
-        user = get_user_model().objects.all()#.filter(email=self.request.query_params.get('email'))
+        user = get_user_model().objects.filter(email=self.request.query_params.get('email'))
+        print(user)
         return user
 
     # Metoda wybiera z jakiego serializera będziemy korzystać

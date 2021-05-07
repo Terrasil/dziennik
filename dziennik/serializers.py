@@ -61,3 +61,9 @@ class UsersSerializer(serializers.ModelSerializer):
         model = get_user_model()
         # Dane jakie potrzebujemy pobrać o uzytkowniku
         fields = ['id', 'username', 'first_name', 'last_name', 'email', 'role']
+
+class UsersActivatedSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = get_user_model()
+        # Dane jakie potrzebujemy pobrać o uzytkowniku
+        fields = ['is_active']

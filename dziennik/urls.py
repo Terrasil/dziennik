@@ -23,6 +23,7 @@ from .views import UserRegisterViewSet, UsersViewSet, UsersActivatedViewSet
 router = routers.DefaultRouter()
 router.register('users', UsersViewSet)
 router.register('users-register', UserRegisterViewSet)
+router.register('users-activated', UsersActivatedViewSet)
 
 urlpatterns = [
     

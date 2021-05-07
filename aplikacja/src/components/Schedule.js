@@ -58,8 +58,8 @@ function Schedule() {
                 <div className="bg-primary text-white">Niedziela</div>
                 {
                     monthdays?.map((week) => {
-                        return week.map((day) => {
-                            return(<div>{day}</div>)
+                        return week.map((day, index) => {
+                            return(<div key={index}>{day}</div>)
                         })
                     })
                 } 

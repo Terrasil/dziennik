@@ -5,25 +5,12 @@ import Button from 'react-bootstrap/Button';
 import Image from 'react-bootstrap/Image'
 import Logo from '../img/logo.png'
 import { Alert } from 'react-bootstrap';
+import { getCookie } from '../functions'
 
 function Login(props){
 
-  // Odczytywanie wartości z cookie
-  const getCookie = (name) => {
-    var str = document.cookie
-    str = str.split('; ');
-    var result = {};
-    for (var i = 0; i < str.length; i++) {
-        var cur = str[i].split('=');
-        result[cur[0]] = cur[1];
-    }
-    return result[name] ? result[name] : ''
-  }
-
   const [ form, setForm ] = useState({})
   const [ errors, setErrors ] = useState({})
-  const [ receivetoken, setReceiveToken ] = useState(false)
-  const [ receiveuserdata, setReceiveUserData ] = useState(false)
   const [ rememberme, setRememberMe ] = useState(getCookie('rememberme'))
 
   // Pobieranie CSRFToken'a z Django
@@ -83,6 +70,30 @@ function Login(props){
       }
     }
   }
+  const receiveUserActive = async (email) => {
+    const response = await fetch('http://localhost:8000/api/users-activated/?email='+email, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).catch( error => console.error(error))
+    const data = await response.json()
+    console.log(data)
+    console.log(data.length)
+    if(!data.length){
+      // Nieudane otrzymanie danych o aktywacji użytkownika
+      return {
+        activated:false,
+        received:false
+      }
+    }else{
+      // Udane otrzymanie danych o aktywacji użytkownika
+      return {
+        activated:data[0].is_active,
+        received:true
+      }
+    }
+  }
   
 
   // Logowanie
@@ -103,15 +114,20 @@ function Login(props){
     // Zwracamy informacje o użytkowniku do Aplikacji
     const receivedUserData = await receiveUserData(receivedToken.token)
 
+    // Weryfikacja akywacji konta użytkownika
+    const receivedActivated = await receiveUserActive(form.username)
+
     return {
       fetchToken: receivedToken,
-      fetchUserData: receivedUserData
+      fetchUserData: receivedUserData,
+      fetchUserActivated: receivedActivated
     }
   }
   
   // Metoda wykonywania po przycisnięciu 'Zaloguj'
   const handleSubmit = async (e) => {
     e.preventDefault()
+    setErrors(errors)
 
     // Logowanie
     const loginResult = await login(undefined)
@@ -119,18 +135,14 @@ function Login(props){
     // Zapamiętywanie użytkownika
     document.cookie = "rememberme="+rememberme+";max-age="+Number.MAX_SAFE_INTEGER
     
-    // Sprawdzenie czy token został otrzymany
-    await setReceiveToken(loginResult.fetchToken.received)
     // Przekazanie tokenu do aplikacji
     props.getCSRFToken(loginResult.fetchToken.token) 
 
-    // Sprawdzenie czy dane użytkownika zostały otrzymane
-    await setReceiveUserData(loginResult.fetchUserData.received)
     // Przekazanie danych użytkownika do aplikacji
     props.getUserData(loginResult.fetchUserData.userdata)
   
     // Ponowna weryfikacja błędów
-    const newErrors = validation()
+    const newErrors = await validation(loginResult)
     setErrors(newErrors)
   }
 
@@ -153,9 +165,11 @@ function Login(props){
   }
 
   // Walidacja formularza
-  const validation = () => {
+  const validation = async (login) => {
     const { username, password } = form
     const newErrors = {}
+
+    console.table(login)
 
     let formValidated = true
 
@@ -187,10 +201,10 @@ function Login(props){
     // Nieudane logowanie
     // Sprawdzenie poprawnego uzupełniena formularza
     if (formValidated){
+      // Konto użytkownika nie jest aktywne
+      if ( login.fetchUserActivated.activated !== true && login.fetchUserActivated.received ){ newErrors.login = 'Twoje konto nie zostało jeszcze aktywowane!' }
       // Nie otrzymano csrftokena lub nie otrzymano informacji o użytkowniku
-      if ( !receivetoken && !receiveuserdata ) newErrors.login = 'Nazwa użytkownika lub hasło nie zgadzają się. Upewnij się czy konto zostało aktywowane. Sprawdź jeszcze raz i spróbuj ponownie.' // dodać sprawdzenie aktywacji konta
-      // Nie otrzymano csrftokena lub nie otrzymano informacji o użytkowniku
-      //if ( !receivetoken && !receiveuserdata ) newErrors.login = 'Nazwa użytkownika lub hasło nie zgadzają się. Sprawdź jeszcze raz i spróbuj ponownie.'
+      else if ( !login.fetchToken.received  && !login.fetchUserData.received ){ newErrors.login = 'Nazwa użytkownika lub hasło nie zgadzają się. Sprawdź jeszcze raz i spróbuj ponownie.' }
     }
 
     return newErrors
@@ -203,9 +217,13 @@ function Login(props){
   }
 
   useEffect(()=>{
-    console.log(getCookie('rememberme') === 'true')
     if(getCookie('rememberme') === 'true'){
-      login(getCookie('csrftoken'))
+      // Automatyczne logowanie
+      const loginResult = login(getCookie('csrftoken'))
+      
+      // Ponowna weryfikacja błędów
+      const newErrors = validation(loginResult)
+      setErrors(newErrors)
     }
   },[])
   
