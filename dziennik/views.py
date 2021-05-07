@@ -74,7 +74,6 @@ class UsersActivatedViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         # Zwracamy uzytkownika
         user = get_user_model().objects.filter(email=self.request.query_params.get('email'))
-        print(user)
         return user
 
     # Metoda wybiera z jakiego serializera będziemy korzystać

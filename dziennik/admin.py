@@ -38,3 +38,6 @@ admin.site.register(UserActivate)
 
 # Nie korzystamy z grup
 admin.site.unregister(Group)
+
+# Uruchomienie timerów
+import dziennik.timers

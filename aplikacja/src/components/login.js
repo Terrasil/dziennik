@@ -78,8 +78,6 @@ function Login(props){
       }
     }).catch( error => console.error(error))
     const data = await response.json()
-    console.log(data)
-    console.log(data.length)
     if(!data.length){
       // Nieudane otrzymanie danych o aktywacji użytkownika
       return {
@@ -168,8 +166,6 @@ function Login(props){
   const validation = async (login) => {
     const { username, password } = form
     const newErrors = {}
-
-    console.table(login)
 
     let formValidated = true
 
