@@ -3,15 +3,21 @@ from django.http import JsonResponse
 from django.core.mail import EmailMessage
 from rest_framework.authtoken.models import Token
 from rest_framework import viewsets, permissions, exceptions
-from .serializers import UserRegisterSerializer, UsersSerializer, UsersActivatedSerializer
+from .serializers import UserRegisterSerializer, UsersSerializer, UsersActivatedSerializer, InstitutionRegisterSerializer, InstitutionNameExistSerializer
 from .models import UserActivate
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from django.core.serializers import json
 
+#  _   _   ____    _____   ____
+# | | | | / ___|  | ____| |  _ \ 
+# | | | | \___ \  |  _|   | |_) |
+# | |_| |  ___) | | |___  |  _ < 
+#  \___/  |____/  |_____| |_| \_\
+#
 
-# Widok rejestrowania/tworzenia uzytkownika
+# Widok rejestrowania/tworzenia użytkownika
 class UserRegisterViewSet(viewsets.ModelViewSet):
     queryset = get_user_model().objects.none()
 
@@ -110,6 +116,51 @@ class UsersActivationAccountViewSet(viewsets.ModelViewSet):
             # Usuwamy kod aktywacyjny
             activation.delete()
         return user
+
+    # Metoda wybiera z jakiego serializera będziemy korzystać
+    def get_serializer_class(self):
+        return self.serializer_classes.get(self.action, self.default_serializer_class)
+
+#  ___   _   _   ____    _____   ___   _____   _   _   _____   ___    ___    _   _ 
+# |_ _| | \ | | / ___|  |_   _| |_ _| |_   _| | | | | |_   _| |_ _|  / _ \  | \ | |
+#  | |  |  \| | \___ \    | |    | |    | |   | | | |   | |    | |  | | | | |  \| |
+#  | |  | |\  |  ___) |   | |    | |    | |   | |_| |   | |    | |  | |_| | | |\  |
+# |___| |_| \_| |____/    |_|   |___|   |_|    \___/    |_|   |___|  \___/  |_| \_|
+#                                                                                  
+
+# Widok rejestrowania/tworzenia instytucji
+class InstitutionRegisterViewSet(viewsets.ModelViewSet):
+    queryset = get_user_model().objects.none()
+
+    # Lista serializerii dla danech typów zapytań
+    serializer_classes = {
+        'POST': InstitutionRegisterSerializer,
+    }
+
+    # Jeżeli danego zapytania nie ma na liście serializer_classes to wykorzystany będzie domyślny
+    default_serializer_class = InstitutionRegisterSerializer
+
+    # Metoda wybiera z jakiego serializera będziemy korzystać
+    def get_serializer_class(self):
+        return self.serializer_classes.get(self.action, self.default_serializer_class)
+
+
+# Widok do sprzwdzenia czy nazwa instytucji jest jeszcze dostępna
+class InstitutionNameExistViewSet(viewsets.ModelViewSet):
+    queryset = get_user_model().objects.none()
+
+    # Lista serializerii dla danech typów zapytań
+    serializer_classes = {
+        'GET': InstitutionNameExistSerializer,
+    }
+
+    # Jeżeli danego zapytania nie ma na liście serializer_classes to wykorzystany będzie domyślny
+    default_serializer_class = InstitutionNameExistSerializer
+
+    def get_queryset(self):
+        institution_user = get_user_model().objects.filter(username=str(self.request.query_params.get('name')))
+        identificator = [iu for iu in institution_user]
+        return identificator
 
     # Metoda wybiera z jakiego serializera będziemy korzystać
     def get_serializer_class(self):

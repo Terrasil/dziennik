@@ -16,6 +16,7 @@ Celem projektu jest łatwiejsza organizacja zajęć pozalekcyjnych - sprawne prz
 - [x] Modele
 - [x] Logowanie
 - [x] Wysyłanie emaili
+- [x] Aktywacja konta
 - [ ] Widok planu
   - [ ] Dzień
   - [ ] Tydzień
@@ -36,7 +37,7 @@ Celem projektu jest łatwiejsza organizacja zajęć pozalekcyjnych - sprawne prz
   - [ ] Zmiana hasła
   - [ ] Zmiana imienia i nazwiska
 #### **INSTYTUCJA**
-- [ ] Rejestracja
+- [x] Rejestracja
 - [ ] Tworzenie zajęć
 - [ ] Tworzenie profilu pracownika
 - [ ] Podglą zajęć

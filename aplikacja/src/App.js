@@ -4,6 +4,7 @@ import Login from './components/Login';
 import Activate from './components/Activate';
 import Main from './components/Main';
 import RegisterPerson from './components/RegisterPerson'
+import RegisterInstitution from './components/RegisterInstitution'
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 
 function App(){
@@ -60,6 +61,9 @@ function App(){
         </Route>
         <Route path="/register/person">
             <RegisterPerson csrftoken={csrftoken}/>
+        </Route>
+        <Route path="/register/institution">
+            <RegisterInstitution csrftoken={csrftoken}/>
         </Route>
         <Route path="/register">
           <Redirect to='/register/person'/>

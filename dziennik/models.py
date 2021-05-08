@@ -31,7 +31,6 @@ class CustomAccountManager(BaseUserManager):
         user.save()
         return user
 
-
 class CustomUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(_('email address'), unique=True)
     username = models.CharField(max_length=150, unique=True)
@@ -60,7 +59,6 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 class UserActivate(models.Model):
     user_id = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     activate_code = models.CharField(max_length=64)
-    expiration_time = models.DateTimeField(default=timezone.now() + timedelta(days=1))
     
     def __str__(self):
         return self.activate_code
@@ -71,34 +69,28 @@ class UserActivate(models.Model):
 
 class Institution(models.Model):
     user_id = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    email = models.CharField(max_length=200)
-    name = models.CharField(max_length=200)
     category = models.CharField(max_length=200)
     profile = models.CharField(max_length=200)
-    creation_date = models.DateTimeField(default=timezone.now())
 
     def __str__(self):
-        return self.name
+        return self.user_id.username
 
     def publish(self):
         self.save()
         
     class Meta:
-        ordering = ('name',)
+        ordering = ('user_id',)
         verbose_name_plural = "Institutions"
 
 class Employee(models.Model):
     institution_id = models.ForeignKey('Institution', on_delete=models.CASCADE)
     user_id = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    email = models.CharField(max_length=200)
     specialization = models.CharField(max_length = 20,default=True)
     active = models.BooleanField(default=False)
-    first_name = models.CharField(max_length = 20,default=True)
-    last_name = models.CharField(max_length = 20,default=True)
     creation_date = models.DateTimeField(default=timezone.now())
 
     def __str__(self):
-        return self.first_name +" "+ self.last_name
+        return self.user_id.first_name +" "+ self.user_id.last_name
 
     def publish(self):
         self.save()

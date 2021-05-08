@@ -18,14 +18,11 @@ function Activate(props){
       }
     }).catch( error => console.error(error))
     const data = await response.json()
-    console.log(data)
     if(!data.length){
       // Nieudane otrzymanie danych o aktywowaniu użytkownika
-    console.log('1')
       return false
     }else{
       // Udane otrzymanie danych o aktywowaniu użytkownika
-    console.log('2')
       return data[0].is_active
     }
   }
@@ -33,7 +30,6 @@ function Activate(props){
   const activate = async () => {
     const activateResult = await receiveUserActivation(code)
     setActivationStatus(activateResult)
-    console.log(activationstatus)
   }
 
   useEffect(()=>{
