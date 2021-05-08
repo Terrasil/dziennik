@@ -15,7 +15,7 @@ Celem projektu jest łatwiejsza organizacja zajęć pozalekcyjnych - sprawne prz
 #### **SYSTEM**
 - [x] Modele
 - [x] Logowanie
-- [ ] Wysyłanie emaili
+- [x] Wysyłanie emaili
 - [ ] Widok planu
   - [ ] Dzień
   - [ ] Tydzień
@@ -23,7 +23,7 @@ Celem projektu jest łatwiejsza organizacja zajęć pozalekcyjnych - sprawne prz
 - [x] Zapamiętanie użytkownika
 - [x] Wylogowanie
 #### **UŻYTKOWNIK**
-- [ ] Rejestracja
+- [x] Rejestracja
 - [ ] Podglą zajęć
   - [ ] Ustawienie przypomnienia
   - [ ] Wysyłanie wiadomości do prowadzącego

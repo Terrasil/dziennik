@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom";
 import Login from './components/Login';
-import Users from './components/Users';
+import Activate from './components/Activate';
 import Main from './components/Main';
 import RegisterPerson from './components/RegisterPerson'
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
@@ -64,8 +64,8 @@ function App(){
         <Route path="/register">
           <Redirect to='/register/person'/>
         </Route>
-        <Route path="/userslist">
-            <Users/>
+        <Route path="/activate/:code">
+            <Activate csrftoken={csrftoken}/>
         </Route>
       </Switch>
     </Router>

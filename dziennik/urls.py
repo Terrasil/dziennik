@@ -18,12 +18,13 @@ from django.urls import path, include
 from rest_framework import routers
 from rest_framework.authtoken.views import obtain_auth_token
 
-from .views import UserRegisterViewSet, UsersViewSet, UsersActivatedViewSet
+from .views import UserRegisterViewSet, UsersViewSet, UsersActivatedViewSet, UsersActivationAccountViewSet
 
 router = routers.DefaultRouter()
 router.register('users', UsersViewSet)
 router.register('users-register', UserRegisterViewSet)
 router.register('users-activated', UsersActivatedViewSet)
+router.register('users-activation', UsersActivationAccountViewSet)
 
 urlpatterns = [
     
