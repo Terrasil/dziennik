@@ -10,7 +10,7 @@ function Main(props){
   return (
     <> 
       <Header/>
-      <main className="main col-12 flex-grow-1 overflow-auto flex-column" style={{paddingTop:'3.5rem'}}>
+      <main className="main col-12 flex-grow-1 flex-column" style={{paddingTop:'3.5rem',paddingLeft:'0rem',paddingRight:'0rem',overflowX:'hidden'}}>
         <Schedule/>
       </main>
     </>

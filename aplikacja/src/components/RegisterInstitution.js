@@ -76,7 +76,6 @@ function RegisterInstitution(props){
   const handleSubmit = async (e) => {
     e.preventDefault()
     const nameIsAvaiable = await receiveNameExist(form.username)
-    console.log(nameIsAvaiable)
     const newErrors = await validation(nameIsAvaiable)
     setErrors(newErrors)
   }

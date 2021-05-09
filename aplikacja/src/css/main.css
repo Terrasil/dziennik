@@ -3,6 +3,20 @@ html, body, main{
     width: 100%;
 }
 
+/* SHEDULER */
+.text-overflow{
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+}
+.text-overflow-box{
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: horizontal;
+}
+
 /* SCROLLBAR */
 ::-webkit-scrollbar{
     width: 0.75rem;
