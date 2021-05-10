@@ -3,8 +3,8 @@ import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-d
 import Login from './components/Login';
 import Activate from './components/Activate';
 import Main from './components/Main';
-import RegisterPerson from './components/RegisterPerson'
-import RegisterInstitution from './components/RegisterInstitution'
+import RegisterPerson from './components/User/RegisterPerson'
+import RegisterInstitution from './components/Institution/RegisterInstitution'
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 
 function App(){
@@ -57,7 +57,7 @@ function App(){
             <Login csrftoken={csrftoken} getCSRFToken={getCSRFToken} getUserData={getUserData}/>
         </Route>
         <Route exact path="/">
-            <Main/>
+            <Main type='week'/>
         </Route>
         <Route path="/register/person">
             <RegisterPerson csrftoken={csrftoken}/>

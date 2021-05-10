@@ -3,48 +3,29 @@ import  { Redirect } from 'react-router-dom'
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Image from 'react-bootstrap/Image'
-import Logo from '../img/logo.png'
+import Logo from '../../img/logo.png'
 import { Alert, InputGroup, Modal } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUser, faUniversity } from '@fortawesome/free-solid-svg-icons'
 
-function RegisterInstitution(props){
+function RegisterPerson(props){
 
   const [ form, setForm ] = useState({})
   const [ errors, setErrors ] = useState({})
   const [ showmodal, setShowModal ] = useState(false)
 
-  const receiveNameExist = async (name) => {
-    const response = await fetch('http://localhost:8000/api/institutions-exist/?name='+name, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    }).catch( error => console.error(error))
-    const data = await response.json()
-    if(!data.length){
-      // Nazwa nie jest zajęta
-      return false
-    }else{
-      // Nazwa jest zajęta
-      return true
-    }
-  }
-
   const register = async () => {
     // Przygotowanie informacji o tworzonym użytkowniku
     const registerData = {}
-    registerData.username = form.username
+    registerData.username = form.email
     registerData.password = form.password
-    registerData.first_name = ''
-    registerData.last_name = ''
+    registerData.first_name = form.firstname
+    registerData.last_name = form.lastname
     registerData.email = form.email
     registerData.phone = form.phone
-    registerData.role = 'institution'
-    registerData.category = form.category
-    registerData.profile = form.profile
+    registerData.role = 'user'
     // Wykonanie zapytania - rejestracji
-    const response = await fetch('http://localhost:8000/api/institutions-register/', {
+    const response = await fetch('http://localhost:8000/api/users-register/', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(registerData) // Przygotowane dane
@@ -52,7 +33,7 @@ function RegisterInstitution(props){
     const data = await response.json()
     if(data?.email){
       // Nieudana rejestracja
-      return 'Istnieje już instytucja z podanym adresem email.'
+      return 'Istnieje już użytkownik z podanym adresem email.'
     }else{
       // Udana rejestracja
       return undefined
@@ -75,31 +56,42 @@ function RegisterInstitution(props){
   // Metoda wykonywania po przycisnięciu 'Dołącz za darmo'
   const handleSubmit = async (e) => {
     e.preventDefault()
-    const nameIsAvaiable = await receiveNameExist(form.username)
-    const newErrors = await validation(nameIsAvaiable)
+    const newErrors = await validation()
     setErrors(newErrors)
   }
 
   // Walidacja formularza
-  const validation = async (nameExist) => {
-    const { username, email, password, repassword, phone, category, profile } = form
+  const validation = async () => {
+    const { firstname, lastname, email, password, repassword, phone } = form
     const newErrors = {}
 
     let formValidated = true
 
-    // Username errory
-    // Za krótka nazwa instytucji
+    // FirstName errory
+    // Zły format nazwiska
     //eslint-disable-next-line
-    if(username.length < 2){
+    if( !/^[A-ZĘÓŁŚĄŻŹĆŃ]+[a-zA-ZęółśążźćńĘÓŁŚĄŻŹĆŃ]{3,}$/.test(firstname)){
       formValidated = false
-      newErrors.username = 'Podano za krótką nazwę!'
+      newErrors.firstname = 'Podano błędne imie! Powinno zaczynać się z wielkiej litery i nie zawierac cyfr.'
     }
-    // Nie podano nazwy
-    if ( !username || username === '' ) {
+    // Nie podano imienia
+    if ( !firstname || firstname === '' ) {
       formValidated = false
-      newErrors.username = 'Podaj nazwę!'
+      newErrors.firstname = 'Podaj imię!'
     }
     
+    // LastName errory
+    // Zły format nazwiska
+    //eslint-disable-next-line
+    if( !/^([A-ZĘÓŁŚĄŻŹĆŃ]+[a-zA-ZęółśążźćńĘÓŁŚĄŻŹĆŃ][a-zA-ZęółśążźćńĘÓŁŚĄŻŹĆŃ\'\-]+([\ a-zA-ZęółśążźćńĘÓŁŚĄŻŹĆŃ][a-zA-ZęółśążźćńĘÓŁŚĄŻŹĆŃ\'\-]+)*).{1,}/.test(lastname)){
+      formValidated = false
+      newErrors.lastname = 'Podano błędne nazwisko! Powinno zaczynać się z wielkiej litery i nie zawierac cyfr.'
+    }
+    // Nie podano nazwiska
+    if ( !lastname || lastname === '' ) {
+      formValidated = false
+      newErrors.lastname = 'Podaj nazwisko!'
+    }
 
     // Email errory
     // Zły format/pattern email'a
@@ -160,20 +152,6 @@ function RegisterInstitution(props){
       newErrors.repassword = 'Powtórz hasło!'
     }
 
-    // Category errory
-    // Nie wybrano kategorii
-    if ( !category || category === '' ) {
-      formValidated = false
-      newErrors.category = 'Wybierz kategorię!'
-    }
-
-    // Profile errory
-    // Nie wybrano kategorii
-    if ( !profile || profile === '' ) {
-      formValidated = false
-      newErrors.profile = 'Podaj profil!'
-    }
-
     // Phone errory
     // Jeżeli podamy numer telefonu to nalezy sprawdzić jego format
     //eslint-disable-next-line
@@ -206,9 +184,6 @@ function RegisterInstitution(props){
         // Wystąpił błąd
         // Ustawiamy error do wyświetlenia
         newErrors.register = registerReceive
-      }else if(nameExist){
-        // Nazwa jest już ajęta
-        newErrors.register = 'Podana nazwa jest już zajęta!'
       }else{
         // Nie wystąpił błąd
         // Pokazanie modal'u
@@ -266,23 +241,34 @@ function RegisterInstitution(props){
           <Form className="col-md-6">
             <Form.Group className="text-center pb-4 container-fluid">
               <div className="row align-items-start">
-                <div className="col" style={{paddingTop:'1rem', paddingBottom:'1rem',borderBottom:'0.5rem solid transparent'}}>
-                  <a href="../register/person" id="signup"><FontAwesomeIcon style={{fontSize: 'min(25vw, 900%)'}} color="silver" icon={faUser} /></a>
-                </div>
                 <div className="col" style={{paddingTop:'1rem', paddingBottom:'1rem',borderBottom:'0.5rem solid dodgerblue'}}>
-                  <FontAwesomeIcon style={{fontSize: 'min(25vw, 900%)'}} color="dodgerblue" icon={faUniversity} />
+                  <FontAwesomeIcon style={{fontSize: 'min(25vw, 900%)'}} color="dodgerblue" icon={faUser} />
+                </div>
+                <div className="col" style={{paddingTop:'1rem', paddingBottom:'1rem',borderBottom:'0.5rem solid transparent'}}>
+                  <a href="../register/institution" id="signup"><FontAwesomeIcon style={{fontSize: 'min(25vw, 900%)'}} color="silver" icon={faUniversity} /></a>
                 </div>
               </div>
             </Form.Group>
             <Form.Group>
-              <Form.Label>Podaj nazwę</Form.Label>
+              <Form.Label>Podaj imię</Form.Label>
               <InputGroup className="mb-3">
                 <Form.Control 
-                  type='text' name="username"
-                  onChange={ e => setField('username', e.target.value) }
-                  isInvalid={ !!errors.username }
+                  type='text' name="firstname"
+                  onChange={ e => setField('firstname', e.target.value) }
+                  isInvalid={ !!errors.firstname }
                 />
-                <Form.Control.Feedback type='invalid'>{ errors.username }</Form.Control.Feedback>
+                <Form.Control.Feedback type='invalid'>{ errors.firstname }</Form.Control.Feedback>
+              </InputGroup>
+            </Form.Group>
+            <Form.Group>
+              <Form.Label>Podaj nazwisko</Form.Label>
+              <InputGroup className="mb-3">
+                <Form.Control 
+                  type='text' name="lastname"
+                  onChange={ e => setField('lastname', e.target.value) }
+                  isInvalid={ !!errors.lastname }
+                />
+                <Form.Control.Feedback type='invalid'>{ errors.lastname }</Form.Control.Feedback>
               </InputGroup>
             </Form.Group>
             <Form.Group>
@@ -337,33 +323,6 @@ function RegisterInstitution(props){
              </InputGroup>
             </Form.Group>
             <Form.Group>
-              <Form.Label>Kategoria</Form.Label>
-              <Form.Control as="select" custom 
-                  type='tel' name="category"
-                  onChange={ e => setField('category', e.target.value) }
-                  isInvalid={ !!errors.category }
-                >
-                <option disabled selected hidden>Wybierz z listy...</option>
-								<option value="Szkoła języków obych">Szkoła języków obych</option>
-								<option value="Klub sportowy">Klub sportowy</option>
-								<option value="Korepetycje">Korepetycje</option>
-								<option value="Inne zajęcia pozalekcyjne">Inne zajęcia pozalekcyjne</option>
-              </Form.Control>
-              <Form.Control.Feedback type='invalid'>{ errors.category }</Form.Control.Feedback>
-            </Form.Group>
-            
-            <Form.Group>
-              <Form.Label>Podaj profil</Form.Label>
-              <InputGroup className="mb-3">
-                <Form.Control 
-                  type='text' name="profile"
-                  onChange={ e => setField('profile', e.target.value) }
-                  isInvalid={ !!errors.profile }
-                />
-                <Form.Control.Feedback type='invalid'>{ errors.profile }</Form.Control.Feedback>
-              </InputGroup>
-            </Form.Group>
-            <Form.Group>
               <Alert variant={'danger'} show={ !!errors.register } type='invalid'>{ errors.register }</Alert>
             </Form.Group>
             <Form.Group className="text-center pt-4">
@@ -379,4 +338,4 @@ function RegisterInstitution(props){
   )
 }
 
-export default RegisterInstitution;
+export default RegisterPerson;
