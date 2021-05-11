@@ -148,3 +148,10 @@ class InstitutionNameExistSerializer(serializers.ModelSerializer):
         model = get_user_model()
         # Dane jakie potrzebujemy pobrać o uzytkowniku
         fields = ['username']
+
+#  _____   __  __   ____    _        ___   __   __  _____   _____ 
+# | ____| |  \/  | |  _ \  | |      / _ \  \ \ / / | ____| | ____|
+# |  _|   | |\/| | | |_) | | |     | | | |  \ V /  |  _|   |  _|  
+# | |___  | |  | | |  __/  | |___  | |_| |   | |   | |___  | |___ 
+# |_____| |_|  |_| |_|     |_____|  \___/    |_|   |_____| |_____|
+#                                                                 

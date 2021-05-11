@@ -165,3 +165,10 @@ class InstitutionNameExistViewSet(viewsets.ModelViewSet):
     # Metoda wybiera z jakiego serializera będziemy korzystać
     def get_serializer_class(self):
         return self.serializer_classes.get(self.action, self.default_serializer_class)
+
+#  _____   __  __   ____    _        ___   __   __  _____   _____ 
+# | ____| |  \/  | |  _ \  | |      / _ \  \ \ / / | ____| | ____|
+# |  _|   | |\/| | | |_) | | |     | | | |  \ V /  |  _|   |  _|  
+# | |___  | |  | | |  __/  | |___  | |_| |   | |   | |___  | |___ 
+# |_____| |_|  |_| |_|     |_____|  \___/    |_|   |_____| |_____|
+#  

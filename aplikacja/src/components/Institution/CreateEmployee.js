@@ -3,45 +3,18 @@ import  { Redirect } from 'react-router-dom'
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import Image from 'react-bootstrap/Image'
-import Logo from '../../img/logo.png'
 import { Alert, InputGroup, Modal } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUser, faUniversity } from '@fortawesome/free-solid-svg-icons'
+import Header from '../Header';
 
-function RegisterPerson(props){
+function CreateEmployee() {
+    const [ form, setForm ] = useState({})
+    const [ errors, setErrors ] = useState({})
+    const [ showmodal, setShowModal ] = useState(false)
 
-  const [ form, setForm ] = useState({})
-  const [ errors, setErrors ] = useState({})
-  const [ showmodal, setShowModal ] = useState(false)
-
-  const register = async () => {
-    // Przygotowanie informacji o tworzonym użytkowniku
-    const registerData = {}
-    registerData.username = form.email
-    registerData.password = form.password
-    registerData.first_name = form.firstname
-    registerData.last_name = form.lastname
-    registerData.email = form.email
-    registerData.phone = form.phone
-    registerData.role = 'user'
-    // Wykonanie zapytania - rejestracji
-    const response = await fetch('http://localhost:8000/api/users-register/', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify(registerData) // Przygotowane dane
-    }).catch( error => console.error(error))
-    const data = await response.json()
-    if(data?.email){
-      // Nieudana rejestracja
-      return 'Istnieje już użytkownik z podanym adresem email.'
-    }else{
-      // Udana rejestracja
-      return undefined
-    }
-  }
-
-  // Pobieranie informacji z formularza rejestracji
-  const setField = (field, value) => {
+   // Pobieranie informacji z formularza rejestracji
+   const setField = (field, value) => {
     setForm({
       ...form,
       [field]: value
@@ -56,13 +29,13 @@ function RegisterPerson(props){
   // Metoda wykonywania po przycisnięciu 'Dołącz za darmo'
   const handleSubmit = async (e) => {
     e.preventDefault()
-    const newErrors = await validation()
+    const newErrors = await validation(true)
     setErrors(newErrors)
   }
 
   // Walidacja formularza
-  const validation = async () => {
-    const { firstname, lastname, email, password, repassword, phone } = form
+  const validation = async (nameExist) => {
+    const { firstname, lastname, email, phone, specialization } = form
     const newErrors = {}
 
     let formValidated = true
@@ -106,45 +79,19 @@ function RegisterPerson(props){
       newErrors.email = 'Podaj adres email!'
     }
 
-    // Password errory
-    // Nie podano hasła
-    if ( !password || password === '' ) {
+    // Specialization errory
+    // Nie podano specjalizacji
+    if ( !specialization || specialization === '' ) {
       formValidated = false
-      newErrors.password = ['Podaj hasło!']
-    }
-    else{
-      const passwordRegexValidations = []
-      // Hasło zakrótkie (min. 8 znaków)
-      if(password.length < 8) {
-        passwordRegexValidations.push('Hasło musi zkładać się z 8-u znaków!')
-      }
-      // Brak wielkiej litery
-      //eslint-disable-next-line
-      if(!/\w*[A-ZĘÓŁŚĄŻŹĆŃ]\w*/g.test(password)) {
-        passwordRegexValidations.push('Hasło musi zawierać przynajmniej jedną dużą literę!')
-      }
-      // Brak cyfry
-      //eslint-disable-next-line
-      if(!/\w*[0-9]\w*/g.test(password)) {
-        passwordRegexValidations.push('Hasło musi zawierać przynajmniej jedną cyfrę!')
-      }
-      // Jeżeli cokolwiek dodano do passwordRegexValidations - ustawiamy jako error
-      if(passwordRegexValidations.length > 0){
-        formValidated = false
-        newErrors.password = passwordRegexValidations
-      }
+      newErrors.specialization = 'Podaj specjalizację'
     }
 
-    // RePassword errory
-    // Hasła się nie zgadzają
-    if ( password !== repassword ) {
+    // Specialization errory
+    // Zły format specjalizacji
+    //eslint-disable-next-line
+    if( !/^[\-a-zA-ZęółśążźćńĘÓŁŚĄŻŹĆŃ\s\/.]{3,}$/.test(specialization)){
       formValidated = false
-      newErrors.repassword = 'Hasła się nie zgadzają!'
-    }
-    // Nie powtórzono hasła
-    if ( !repassword || repassword === '' ) {
-      formValidated = false
-      newErrors.repassword = 'Powtórz hasło!'
+      newErrors.specialization = 'Podano błędną specjalizację! Specjalizacja powinna nie zawierać cyfr oraz znaków specjalnych.'
     }
 
     // Phone errory
@@ -173,32 +120,21 @@ function RegisterPerson(props){
     // Rejestracja
     newErrors.register = undefined
     if(formValidated){
-      // Zwracanie odpowiedzi z zapytania do api
-      const registerReceive = await register()
-      if(registerReceive !== undefined){
-        // Wystąpił błąd
-        // Ustawiamy error do wyświetlenia
-        newErrors.register = registerReceive
-      }else{
-        // Nie wystąpił błąd
-        // Pokazanie modal'u
         setShowModal(true)
-      }
     }
 
     return newErrors
   }
-
+/*
   const redirect = () => {
     if (!!props.csrftoken) {
       return <Redirect to='/' />
     }
   }
-
+*/
   const modal = () => {
     return (
       <Modal
-        {...props}
         size="md"
         aria-labelledby="contained-modal-title-vcenter"
         show={showmodal}
@@ -229,21 +165,11 @@ function RegisterPerson(props){
 
   return (
     <>
-      { redirect() }
       { modal() }
-      <div className="container h-100">
+      <Header />
+      <div className="container h-100" style={{marginTop: "3.5rem", minHeight: "calc(100%-3.5rem)"}}>
         <div className="row h-100 justify-content-center align-items-center">
-          <Form className="col-md-6">
-            <Form.Group className="text-center pb-4 container-fluid">
-              <div className="row align-items-start">
-                <div className="col" style={{paddingTop:'1rem', paddingBottom:'1rem',borderBottom:'0.5rem solid dodgerblue'}}>
-                  <FontAwesomeIcon style={{fontSize: 'min(25vw, 900%)'}} color="dodgerblue" icon={faUser} />
-                </div>
-                <div className="col" style={{paddingTop:'1rem', paddingBottom:'1rem',borderBottom:'0.5rem solid transparent'}}>
-                  <a href="../register/institution" id="signup"><FontAwesomeIcon style={{fontSize: 'min(25vw, 900%)'}} color="silver" icon={faUniversity} /></a>
-                </div>
-              </div>
-            </Form.Group>
+        <Form className="col-md-6">
             <Form.Group>
               <Form.Label>Podaj imię</Form.Label>
               <InputGroup className="mb-3">
@@ -278,32 +204,14 @@ function RegisterPerson(props){
               </InputGroup>
             </Form.Group>
             <Form.Group>
-              <Form.Label>Hasło</Form.Label>
+              <Form.Label>Specjalizacja</Form.Label>
               <InputGroup className="mb-3">
                 <Form.Control 
-                  type='password' name="password"
-                  onChange={ e => setField('password', e.target.value) }
-                  isInvalid={ !!errors.password }
-                  data-toggle="password"
+                  type='specialization' name="specialization"
+                  onChange={ e => setField('specialization', e.target.value) }
+                  isInvalid={ !!errors.specialization }
                 />
-                <Form.Control.Feedback style={{color:'gray', display:'block'}}>Hasło musi składać się z 8-miu znaków i zawierac wielką literę oraz cyfrę.</Form.Control.Feedback>
-                {
-                  errors.password?.map((suberror,index) => (
-                    <Form.Control.Feedback key={index} type='invalid'>{ suberror }</Form.Control.Feedback>
-                  ))  
-                }
-              </InputGroup>
-            </Form.Group>
-            <Form.Group>
-              <Form.Label>Powtórz hasło</Form.Label>
-              <InputGroup className="mb-3">
-                <Form.Control 
-                  type='password' name="repassword"
-                  onChange={ e => setField('repassword', e.target.value) }
-                  isInvalid={ !!errors.repassword }
-                  data-toggle="repassword"
-                />
-                <Form.Control.Feedback type='invalid'>{ errors.repassword }</Form.Control.Feedback>
+                <Form.Control.Feedback type='invalid'>{ errors.specialization }</Form.Control.Feedback>
               </InputGroup>
             </Form.Group>
             <Form.Group>
@@ -321,10 +229,7 @@ function RegisterPerson(props){
               <Alert variant={'danger'} show={ !!errors.register } type='invalid'>{ errors.register }</Alert>
             </Form.Group>
             <Form.Group className="text-center pt-4">
-              <Button className="rounded-pill col-6" type='submit' onClick={ handleSubmit }>Dołącz za darmo</Button>
-            </Form.Group>
-            <Form.Group className="text-center">
-              Posiadasz juz konto? <a href="../../login" id="signup">Zaloguj się</a>
+              <Button className="rounded-pill col-6" type='submit' onClick={ handleSubmit }>Stwórz pracownika</Button>
             </Form.Group>
           </Form>
         </div>
@@ -333,4 +238,4 @@ function RegisterPerson(props){
   )
 }
 
-export default RegisterPerson;
+export default CreateEmployee;

@@ -1,7 +1,7 @@
 import React, { SyntheticEvent ,useEffect, useState } from 'react';
 import { Col, Container, Row } from 'react-bootstrap';
 import { useGlobalEvent } from "beautiful-react-hooks";
-import { getMonthName, getWeekDayName, elementHasScrollbarByID } from "../functions"
+import { getMonthName, getWeekDayName } from "../functions"
 
 function ScheduleWeek() {
 
@@ -16,7 +16,6 @@ function ScheduleWeek() {
     let weeksArray = []
     let week = 1
 
-    console.log((0 | today.getDate() / 7)+1)
 
     // Ustawiamy datę rozpoczęcia miesiąca
     var calendarStartDay = new Date(monthStart);
@@ -52,9 +51,9 @@ function ScheduleWeek() {
     let opacity = today.getMonth() == date.date.month ? 1 : 0.5
     return (
       <div style={{opacity:opacity}}>
-        <div onClick={()=>{console.log('test')}}className="rounded my-1 p-1 bg-primary text-white">Test<br/><i>Imie nazwisko</i><br/><i>Imie nazwisko</i><br/>od x do y</div>
-        <div className="rounded my-1 p-1 bg-primary text-white">Test<br/><i>Imie nazwisko</i><br/><i>Imie nazwisko</i><br/>od x do y</div>
-        <div className="rounded my-1 p-1 bg-primary text-white">Test<br/><i>Imie nazwisko</i><br/><i>Imie nazwisko</i><br/>od x do y</div>
+        <div onClick={()=>{console.log('test1')}} className="rounded my-1 p-2 bg-primary text-white"><b>Test</b><br/><i>Imie nazwisko</i><br/><i>Imie nazwisko</i><br/><font size='2'>OD</font> 10:00 <font size='2'>DO</font> 12:00</div>
+        <div onClick={()=>{console.log('test2')}} className="rounded my-1 p-2 bg-primary text-white"><b>Test</b><br/><i>Imie nazwisko</i><br/><i>Imie nazwisko</i><br/><font size='2'>OD</font> 10:00 <font size='2'>DO</font> 12:00</div>
+        <div onClick={()=>{console.log('test3')}} className="rounded my-1 p-2 bg-primary text-white"><b>Test</b><br/><i>Imie nazwisko</i><br/><i>Imie nazwisko</i><br/><font size='2'>OD</font> 10:00 <font size='2'>DO</font> 12:00</div>
       </div>
     )
   } 
@@ -66,10 +65,10 @@ function ScheduleWeek() {
 
   function ScheduleMenu(){
     return(
-      <div className="position-fixed w-100" style={{zIndex:'1001'}}>
+      <div id='scheduleMenu' className="position-fixed w-100" style={{zIndex:'1001'}}>
         <div className="bg-primary text-white text-center row" style={{height:'3rem'}}><span className="col my-auto">{getMonthName()} {new Date().getFullYear()}</span></div>
         <Container style={{
-          minHeight:'calc(100% - 6rem)',
+          minHeight:'calc(100% - 6rem + 1px)',
           width:  windowsize.width > 320 ? 'calc(100% - 0.5rem)' : '100%',
           marginLeft:'-0.25rem',
           display: 'grid',
@@ -110,7 +109,7 @@ function ScheduleWeek() {
     <>
       <ScheduleMenu/>
       <div className="bg-primary text-white text-center row" style={{height:'6rem'}}></div>
-      <Container id='schedule-container' style={{
+      <Container style={{
         minHeight:'calc(100% - 6rem)',
         minWidth:'100%',
         display: 'grid',

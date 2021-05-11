@@ -10,18 +10,6 @@ const getCookie = (name) => {
   return result[name] ? result[name] : ''
 }
 
-// Wykrywanie czy element o podanym id posiada scrollbary
-function elementHasScrollbarByID(id) {
-  var div = document.getElementById(id);
-  var hs = div.scrollWidth > div.clientWidth;
-  var vs = div.scrollHeight > div.clientHeight;
-      
-  console.log(
-    "Horizontal Scrollbar - " + hs
-  + "<br>Vertical Scrollbar - " + vs
-  )
-}
-
 // Podanie nazwy miesiąca
 function getMonthName(){
   const monthNumber = new Date().getMonth()
@@ -43,7 +31,6 @@ function convertRemToPixels(rem) {
 
 export { 
     getCookie,
-    elementHasScrollbarByID,
     getMonthName,
     getWeekDayName,
     convertRemToPixels

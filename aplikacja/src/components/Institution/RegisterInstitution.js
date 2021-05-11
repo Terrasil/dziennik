@@ -90,7 +90,7 @@ function RegisterInstitution(props){
     // Username errory
     // Za krótka nazwa instytucji
     //eslint-disable-next-line
-    if(username.length < 2){
+    if(username?.length < 2){
       formValidated = false
       newErrors.username = 'Podano za krótką nazwę!'
     }
@@ -118,7 +118,7 @@ function RegisterInstitution(props){
     // Nie podano hasła
     if ( !password || password === '' ) {
       formValidated = false
-      newErrors.password = 'Podaj hasło!'
+      newErrors.password = ['Podaj hasło!']
     }
     else{
       const passwordRegexValidations = []
@@ -135,11 +135,6 @@ function RegisterInstitution(props){
       //eslint-disable-next-line
       if(!/\w*[0-9]\w*/g.test(password)) {
         passwordRegexValidations.push('Hasło musi zawierać przynajmniej jedną cyfrę!')
-      }
-      // Brak znaków specjalnych
-      //eslint-disable-next-line
-      if(!/\w*[\!@#$%^&*()\\[\]{}\-_+=~`|:;"'<>,./?]\w*/g.test(password)) {
-        passwordRegexValidations.push('Hasło musi zawierać przynajmniej jedn znak specjalny!')
       }
       // Jeżeli cokolwiek dodano do passwordRegexValidations - ustawiamy jako error
       if(passwordRegexValidations.length > 0){
@@ -305,11 +300,11 @@ function RegisterInstitution(props){
                   isInvalid={ !!errors.password }
                   data-toggle="password"
                 />
-                <Form.Control.Feedback style={{color:'gray', display:'block'}}>Hasło musi składać się z 8-miu znaków i zawierac wielką literę, cyfrę oraz znak specjalny.</Form.Control.Feedback>
+                <Form.Control.Feedback style={{color:'gray', display:'block'}}>Hasło musi składać się z 8-miu znaków i zawierac wielką literę oraz cyfrę.</Form.Control.Feedback>
                 {
                   errors.password?.map((suberror,index) => (
                     <Form.Control.Feedback key={index} type='invalid'>{ suberror }</Form.Control.Feedback>
-                  ))  
+                  ))
                 }
               </InputGroup>
             </Form.Group>
@@ -339,7 +334,7 @@ function RegisterInstitution(props){
             <Form.Group>
               <Form.Label>Kategoria</Form.Label>
               <Form.Control as="select" custom 
-                  type='tel' name="category"
+                  type='select' name="category"
                   onChange={ e => setField('category', e.target.value) }
                   isInvalid={ !!errors.category }
                 >
@@ -360,6 +355,7 @@ function RegisterInstitution(props){
                   onChange={ e => setField('profile', e.target.value) }
                   isInvalid={ !!errors.profile }
                 />
+                <Form.Control.Feedback style={{color:'gray', display:'block'}}>Np. języka angielski, piłka nożna, tenis...</Form.Control.Feedback>
                 <Form.Control.Feedback type='invalid'>{ errors.profile }</Form.Control.Feedback>
               </InputGroup>
             </Form.Group>

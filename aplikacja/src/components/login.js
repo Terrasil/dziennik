@@ -23,7 +23,7 @@ function Login(props){
     const data = await response.json()
     if(!!data.non_field_errors){
       // Nieudane otrzymanie CSRFTokena
-      // Zwracamy nic
+      // Zwracamy brak tokena
       return {
         token:undefined, 
         received:false

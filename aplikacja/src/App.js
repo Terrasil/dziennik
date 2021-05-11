@@ -57,7 +57,7 @@ function App(){
             <Login csrftoken={csrftoken} getCSRFToken={getCSRFToken} getUserData={getUserData}/>
         </Route>
         <Route exact path="/">
-            <Main type='week'/>
+            <Main type='month'/>
         </Route>
         <Route path="/register/person">
             <RegisterPerson csrftoken={csrftoken}/>
