@@ -4,7 +4,7 @@ from email.mime.image import MIMEImage
 from django.template.loader import render_to_string
 from rest_framework.authtoken.models import Token
 from rest_framework import serializers
-from .models import UserActivate, Institution
+from .models import UserActivate, Institution, Activity
 from .settings import STATIC_ROOT
 
 import random
@@ -72,6 +72,13 @@ class UsersActivatedSerializer(serializers.ModelSerializer):
         # Dane jakie potrzebujemy pobrać o uzytkowniku
         fields = ['is_active']
 
+class UsersGetActivities(serializers.ModelSerializer):
+    children = serializers.CharField()
+    employee = serializers.CharField()
+    class Meta:
+        model = Activity
+        # Dane jakie potrzebujemy pobrać o aktywności
+        fields = ('name', 'date', 'start_time', 'end_time', 'periodicity', 'finished', 'remind_employee', 'children', 'employee', )
 
 #  ___   _   _   ____    _____   ___   _____   _   _   _____   ___    ___    _   _ 
 # |_ _| | \ | | / ___|  |_   _| |_ _| |_   _| | | | | |_   _| |_ _|  / _ \  | \ | |

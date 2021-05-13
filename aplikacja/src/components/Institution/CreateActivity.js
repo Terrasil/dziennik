@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState, useLayoutEffect  } from 'react';
 import  { Redirect } from 'react-router-dom'
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
@@ -8,10 +8,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUser, faUniversity } from '@fortawesome/free-solid-svg-icons'
 import Header from '../Header';
 
-function CreateActivity() {
-    const [ form, setForm ] = useState({})
-    const [ errors, setErrors ] = useState({})
-    const [ showmodal, setShowModal ] = useState(false)
+function CreateActivity(props) {
+  const [ form, setForm ] = useState({})
+  const [ errors, setErrors ] = useState({})
+  const [ showmodal, setShowModal ] = useState(false)
+    
+  const [csrftoken, setCSRFToken] = useState(props.csrftoken);
+  const [userdata, setUserData] = useState(props.userdata);
+  
 
    // Pobieranie informacji z formularza rejestracji
    const setField = (field, value) => {
@@ -135,13 +139,7 @@ function CreateActivity() {
 
     return newErrors
   }
-/*
-  const redirect = () => {
-    if (!!props.csrftoken) {
-      return <Redirect to='/' />
-    }
-  }
-*/
+
   const modal = () => {
     return (
       <Modal
@@ -172,12 +170,12 @@ function CreateActivity() {
   //<Form.Group className="text-center pb-4 container-fluid">
   //  <Image src={Logo} style={{width:'50%', padding:'1rem'}}/>
   //</Form.Group>
-
+  
   return (
     <>
       { modal() }
-      <Header />
-      <div className="container h-100" style={{marginTop: "3.5rem", minHeight: "calc(100%-3.5rem)"}}>
+      <Header csrftoken={props.csrftoken} userdata={props.userdata}/>
+      <div className="container h-100" style={{top: "3.5rem", minHeight: "calc(100%-3.5rem)"}}>
         <div className="row h-100 justify-content-center align-items-center">
         <Form className="col-md-6">
             <Form.Group>
@@ -232,10 +230,10 @@ function CreateActivity() {
                   isInvalid={ !!errors.periodicity }
                 >
                 <option disabled selected hidden>Wybierz z listy...</option>
-				<option value="Brak">Brak</option>
-				<option value="Codziennie">Codziennie</option>
-				<option value="Co tydzień">Co tydzień</option>
-				<option value="Co dwa tygodnie">Co dwa tygodnie</option>
+                <option value="Brak">Brak</option>
+                <option value="Codziennie">Codziennie</option>
+                <option value="Co tydzień">Co tydzień</option>
+                <option value="Co dwa tygodnie">Co dwa tygodnie</option>
                 <option value="Co miesiąc">Co miesiąc</option>
               </Form.Control>
               <Form.Control.Feedback type='invalid'>{ errors.periodicity }</Form.Control.Feedback>
@@ -248,10 +246,10 @@ function CreateActivity() {
                   isInvalid={ !!errors.employee }
                 >
                 <option disabled selected hidden>Wybierz z listy...</option>
-				<option value="Brak">Brak</option>
-				<option value="Codziennie">Codziennie</option>
-				<option value="Co tydzień">Co tydzień</option>
-				<option value="Co dwa tygodnie">Co dwa tygodnie</option>
+                <option value="Brak">Brak</option>
+                <option value="Codziennie">Codziennie</option>
+                <option value="Co tydzień">Co tydzień</option>
+                <option value="Co dwa tygodnie">Co dwa tygodnie</option>
                 <option value="Co miesiąc">Co miesiąc</option>
               </Form.Control>
               <Form.Control.Feedback type='invalid'>{ errors.employee }</Form.Control.Feedback>
@@ -264,10 +262,10 @@ function CreateActivity() {
                   isInvalid={ !!errors.child }
                 >
                 <option disabled selected hidden>Wybierz z listy...</option>
-				<option value="Brak">Brak</option>
-				<option value="Codziennie">Codziennie</option>
-				<option value="Co tydzień">Co tydzień</option>
-				<option value="Co dwa tygodnie">Co dwa tygodnie</option>
+                <option value="Brak">Brak</option>
+                <option value="Codziennie">Codziennie</option>
+                <option value="Co tydzień">Co tydzień</option>
+                <option value="Co dwa tygodnie">Co dwa tygodnie</option>
                 <option value="Co miesiąc">Co miesiąc</option>
               </Form.Control>
               <Form.Control.Feedback type='invalid'>{ errors.child }</Form.Control.Feedback>

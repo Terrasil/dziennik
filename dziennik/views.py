@@ -3,8 +3,8 @@ from django.http import JsonResponse
 from django.core.mail import EmailMessage
 from rest_framework.authtoken.models import Token
 from rest_framework import viewsets, permissions, exceptions
-from .serializers import UserRegisterSerializer, UsersSerializer, UsersActivatedSerializer, InstitutionRegisterSerializer, InstitutionNameExistSerializer
-from .models import UserActivate
+from .serializers import UserRegisterSerializer, UsersSerializer, UsersActivatedSerializer, InstitutionRegisterSerializer, InstitutionNameExistSerializer, UsersGetActivities
+from .models import Activity, UserActivate
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
@@ -116,6 +116,36 @@ class UsersActivationAccountViewSet(viewsets.ModelViewSet):
             # Usuwamy kod aktywacyjny
             activation.delete()
         return user
+
+    # Metoda wybiera z jakiego serializera będziemy korzystać
+    def get_serializer_class(self):
+        return self.serializer_classes.get(self.action, self.default_serializer_class)
+
+# Widok do pobrania informacji powiazanych z użytkownikiem
+class UsersGetActivitiesViewSet(viewsets.ModelViewSet):
+    queryset = Activity.objects.none()
+
+    # Wymagane podanie tokena w nagłowku zapytania
+    authentication_classes = []
+    permission_classes = []
+
+    # Lista serializerii dla danech typów zapytań
+    serializer_classes = {
+        'GET': UsersGetActivities,
+    }
+
+    # Jeżeli danego zapytania nie ma na liście serializer_classes to wykorzystany będzie domyślny
+    default_serializer_class = UsersGetActivities
+    
+    # Metoda przygotowuje nam dane do zwrócenia
+    def get_queryset(self):
+        # Zwracamy uzytkownika
+        activities = Activity.objects.filter()
+        for a in activities:
+            setattr(a,'children','children')
+            setattr(a,'employee','employee')
+        return activities
+
 
     # Metoda wybiera z jakiego serializera będziemy korzystać
     def get_serializer_class(self):

@@ -8,7 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUser, faUniversity } from '@fortawesome/free-solid-svg-icons'
 import Header from '../Header';
 
-function CreateChild() {
+function CreateChild(props) {
     const [ form, setForm ] = useState({})
     const [ errors, setErrors ] = useState({})
     const [ showmodal, setShowModal ] = useState(false)
@@ -94,13 +94,7 @@ function CreateChild() {
 
     return newErrors
   }
-/*
-  const redirect = () => {
-    if (!!props.csrftoken) {
-      return <Redirect to='/' />
-    }
-  }
-*/
+
   const modal = () => {
     return (
       <Modal
@@ -135,8 +129,8 @@ function CreateChild() {
   return (
     <>
       { modal() }
-      <Header />
-      <div className="container h-100" style={{marginTop: "3.5rem", minHeight: "calc(100%-3.5rem)"}}>
+      <Header csrftoken={props.csrftoken} userdata={ props.userdata}/>
+      <div className="container h-100" style={{top: "3.5rem", minHeight: "calc(100%-3.5rem)"}}>
         <div className="row h-100 justify-content-center align-items-center">
         <Form className="col-md-6">
             <Form.Group>

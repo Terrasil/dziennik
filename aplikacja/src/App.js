@@ -5,7 +5,10 @@ import Activate from './components/Activate';
 import Main from './components/Main';
 import RegisterPerson from './components/User/RegisterPerson'
 import RegisterInstitution from './components/Institution/RegisterInstitution'
+import CreateActivity from './components/Institution/CreateActivity'
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
+import CreateEmployee from './components/Institution/CreateEmployee';
+import CreateChild from './components/User/CreateChild';
 
 function App(){
 
@@ -24,6 +27,34 @@ function App(){
     return result[name] ? result[name] : ''
   }
 
+  // Ponowne pobieranie informacji o uzytkowniku z Django
+  const updateUserDate= async (token) => {
+    const response = await fetch('http://localhost:8000/api/users/?token='+token, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Token ${token}` // Musimy podać nasz CSRFToken aby otrzymać odpowiedź
+      }
+    }).catch( error => console.error(error))
+    const data = await response.json()
+    if(!!data.detail){
+      // Nieudane otrzymanie danych o użytkowniku
+      // Zwracamy nic
+      return {
+        userdata:undefined, 
+        received:false
+      }
+    }else{
+      // Udane otrzymanie danych o użytkowniku
+      window.localStorage.setItem( 'userdata', JSON.stringify(data).toString() )
+      // Zwracam informacje o otrzymanym uzytkowniku (JSON)
+      return {
+        //userdata:JSON.stringify(data).toString(), 
+        userdata:data, 
+        received:true
+      }
+    }
+  }
   // Ustawianie - o ile istnieją - wartość z csrftoken oraz sessionid
   const loadCookies = () => {
     setCSRFToken(getCookie('csrftoken'))
@@ -32,7 +63,10 @@ function App(){
   const loadLocalStorage = () => {
     const localStoredCSRFToken = localStorage.getItem('csrftoken')
     setCSRFToken(localStoredCSRFToken)
-    const localStoredUserData = localStorage.getItem('userdata')
+    if(localStoredCSRFToken!==undefined){
+      //updateUserDate(localStoredCSRFToken)
+    }
+    const localStoredUserData = JSON.parse(localStorage.getItem('userdata')) ? JSON.parse(localStorage.getItem('userdata'))[0] : undefined
     setUserData(localStoredUserData)
   }
 
@@ -41,8 +75,10 @@ function App(){
     setCSRFToken(_csrftoken)
   }
   const getUserData = (_userdata) => {
-    setUserData(_userdata)
+    setUserData(_userdata[0])
   }
+
+  
 
   // Wykonujemy odczyt cookie - wykonuje się jednokrotnie
   useEffect(() => {
@@ -54,10 +90,7 @@ function App(){
     <Router>
       <Switch>
         <Route path="/login">
-            <Login csrftoken={csrftoken} getCSRFToken={getCSRFToken} getUserData={getUserData}/>
-        </Route>
-        <Route exact path="/">
-            <Main type='month'/>
+            <Login csrftoken={csrftoken} userdata={userdata} getCSRFToken={getCSRFToken} getUserData={getUserData}/>
         </Route>
         <Route path="/register/person">
             <RegisterPerson csrftoken={csrftoken}/>
@@ -71,6 +104,20 @@ function App(){
         <Route path="/activate/:code">
             <Activate csrftoken={csrftoken}/>
         </Route>
+        <Route path="/create/activity">
+            <CreateActivity userdata={userdata} csrftoken={csrftoken}/>
+        </Route>
+        <Route path="/create/employee">
+            <CreateEmployee userdata={userdata} csrftoken={csrftoken}/>
+        </Route>
+        <Route path="/create/child">
+            <CreateChild userdata={userdata} csrftoken={csrftoken}/>
+        </Route>
+
+        <Route path="/">
+            <Main userdata={userdata} csrftoken={csrftoken} type='week'/>
+        </Route>
+
       </Switch>
     </Router>
   )

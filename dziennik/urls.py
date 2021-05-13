@@ -18,7 +18,7 @@ from django.urls import path, include
 from rest_framework import routers
 from rest_framework.authtoken.views import obtain_auth_token
 
-from .views import UserRegisterViewSet, UsersViewSet, UsersActivatedViewSet, UsersActivationAccountViewSet, InstitutionRegisterViewSet, InstitutionNameExistViewSet
+from .views import UserRegisterViewSet, UsersViewSet, UsersActivatedViewSet, UsersActivationAccountViewSet, InstitutionRegisterViewSet, InstitutionNameExistViewSet, UsersGetActivitiesViewSet 
 
 router = routers.DefaultRouter()
 # User
@@ -26,6 +26,7 @@ router.register('users', UsersViewSet)
 router.register('users-register', UserRegisterViewSet)
 router.register('users-activated', UsersActivatedViewSet)
 router.register('users-activation', UsersActivationAccountViewSet)
+router.register('user-activities', UsersGetActivitiesViewSet)
 # Institution
 router.register('institutions-register', InstitutionRegisterViewSet)
 router.register('institutions-exist', InstitutionNameExistViewSet)

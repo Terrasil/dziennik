@@ -9,13 +9,17 @@ function Main(props){
   
   const [displaymode, setDisplayMode] = useState(props.type)
 
+  const changeDisplayMode = (displayMode) => {
+    setDisplayMode(displayMode)
+  }
+
   return (
     <> 
-      <Header/>
+      <Header csrftoken={props.csrftoken} userdata={props.userdata}/>
       <main className="main col-12 flex-grow-1 flex-column" style={{paddingTop:'3.5rem',paddingLeft:'0rem',paddingRight:'0rem',overflowX:'hidden'}}>
-        { displaymode == 'day' ? <ScheduleDay/> : null}
-        { displaymode == 'week' ? <ScheduleWeek/> : null}
-        { displaymode == 'month' ? <ScheduleMonth/> : null}
+        { displaymode == 'day' ? <ScheduleDay changeDisplayMode={changeDisplayMode}/> : null }
+        { displaymode == 'week' ? <ScheduleWeek changeDisplayMode={changeDisplayMode}/> : null }
+        { displaymode == 'month' ? <ScheduleMonth changeDisplayMode={changeDisplayMode}/> : null }
       </main>
     </>
   )

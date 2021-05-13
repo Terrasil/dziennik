@@ -60,12 +60,11 @@ function Login(props){
       }
     }else{
       // Udane otrzymanie danych o użytkowniku
-      // Zapisujemy dane o użytkowniku do local storage
       window.localStorage.setItem( 'userdata', JSON.stringify(data).toString() )
-      console.log(data)
       // Zwracam informacje o otrzymanym uzytkowniku (JSON)
       return {
-        userdata:JSON.stringify(data).toString(), 
+        //userdata:JSON.stringify(data).toString(), 
+        userdata:data, 
         received:true
       }
     }
@@ -207,7 +206,7 @@ function Login(props){
   }
 
   const redirect = () => {
-    if (!!props.csrftoken) {
+    if (props.csrftoken && props.userdata) {
       return <Redirect to='/' />
     }
   }

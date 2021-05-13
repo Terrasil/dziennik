@@ -1,9 +1,10 @@
 import React, { SyntheticEvent ,useEffect, useState } from 'react';
-import { Col, Container, Row } from 'react-bootstrap';
+import { Button, Col, Container, Row } from 'react-bootstrap';
 import { useGlobalEvent } from "beautiful-react-hooks";
 import { getMonthName, getWeekDayName } from "../functions"
+import { propTypes } from 'react-bootstrap/esm/Image';
 
-function ScheduleMonth() {
+function ScheduleMonth(props) {
 
   const prepareCalendar = () => {
     // Dzisiejsza data
@@ -44,7 +45,7 @@ function ScheduleMonth() {
   const [windowsize, setWindowSize] = useState({width:window.innerWidth, height:window.innerHeight})
   const onWindowResize = useGlobalEvent("resize")
 
-  function Day(date, activities){
+  const Day = (date, activities) => {
     let today = new Date() 
     // Ustawienie dzi poza zakresem berzącego miesiąca na półprzezroczyste
     let opacity = today.getMonth() == date.date.month ? 1 : 0.5
@@ -56,10 +57,15 @@ function ScheduleMonth() {
     )
   } 
 
-  function ScheduleMenu(){
+  const ScheduleMenu = () => {
     return(
       <div className="position-fixed w-100" style={{zIndex:'999'}}>
-        <div className="bg-primary text-white text-center row" style={{height:'3rem'}}><span className="col my-auto">{getMonthName()} {new Date().getFullYear()}</span></div>
+        <div className="bg-primary text-white text-center row" style={{height:'3rem'}}>
+          <span className="col my-auto">{ getMonthName() } { new Date().getFullYear() }</span>
+          <Button onClick={()=>props.changeDisplayMode('day')} style={{marginRight:'1rem'}}>Dzisiaj</Button>
+          <Button onClick={()=>props.changeDisplayMode('week')} style={{marginRight:'1rem'}}>Tydzień</Button>
+          <Button onClick={()=>props.changeDisplayMode('month')} style={{marginRight:'1rem'}}>Miesiąc</Button>
+        </div>
         <Container style={{
           width:windowsize.width > 320 ? 'calc(100% - 0.5rem)' : '100%',
           marginLeft:'-0.25rem',
