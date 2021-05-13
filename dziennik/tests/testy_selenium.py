@@ -16,7 +16,12 @@ from selenium.webdriver.common.keys import Keys
 # komenda na odpalenie konkretnego testu np. py .\manage.py test dziennik.tests.testy_selenium.TestProject.test_login
 # yyyyyyyyyyyYYYYYYYYYYYYYYYYYYYYYYyyyyyyyyyyyyyyyyyyyyyyyyyyyyYYYYYYYYYYYY
 
-
+#  _   _   ____    _____   ____
+# | | | | / ___|  | ____| |  _ \ 
+# | | | | \___ \  |  _|   | |_) |
+# | |_| |  ___) | | |___  |  _ < 
+#  \___/  |____/  |_____| |_| \_\
+#
 class TestProject(StaticLiveServerTestCase):
     def setUp(self):
         self.browser = webdriver.Chrome(ChromeDriverManager().install())
@@ -57,15 +62,8 @@ class TestProject(StaticLiveServerTestCase):
         button.click()
         self.wait.until(EC.text_to_be_present_in_element((By.XPATH, "/html/body/main/div/div/form/div[4]/div"), "Nazwa użytkownika lub hasło nie zgadzają się. Sprawdź jeszcze raz i spróbuj ponownie."))
         self.browser.close()
-    
 
-    """ Testy Rejestracja Uzytkownik"""
-#  _   _   ____    _____   ____
-# | | | | / ___|  | ____| |  _ \ 
-# | | | | \___ \  |  _|   | |_) |
-# | |_| |  ___) | | |___  |  _ < 
-#  \___/  |____/  |_____| |_| \_\
-#
+    """ Testy Rejestracja Uzytkownika"""
     def test_T4(self):
         self.browser.get('http://localhost:3000/register/person')
         name = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[2]/div/input')
@@ -84,7 +82,310 @@ class TestProject(StaticLiveServerTestCase):
         self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'modal-content')))
         self.browser.close()
 
+    def test_T5(self):
+        self.browser.get('http://localhost:3000/register/person')
+        name = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[2]/div/input')
+        surname = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[3]/div/input')
+        email = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[4]/div/input')
+        password1 = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[5]/div/input')
+        password2 = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[6]/div/input')
+        number = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[7]/div/input')     
+        name.send_keys('Mateusz')
+        surname.send_keys('Wicki')
+        email.send_keys('mateuszwicki1@mail.com')
+        password1.send_keys('Dziennik1')
+        password2.send_keys('Dziennik2')
+        number.send_keys('123456789')
+        self.browser.find_element_by_tag_name('button').click()   
+        time.sleep(2)
+        self.wait.until(EC.text_to_be_present_in_element((By.XPATH, "/html/body/main/div/div/form/div[6]/div/div"), "Hasła się nie zgadzają!"))
+        self.browser.close()
 
+    def test_T6(self):
+        self.browser.get('http://localhost:3000/register/person')
+        name = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[2]/div/input')
+        surname = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[3]/div/input')
+        email = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[4]/div/input')
+        password1 = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[5]/div/input')
+        password2 = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[6]/div/input')
+        number = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[7]/div/input')     
+        name.send_keys('Mateusz')
+        surname.send_keys('Wicki')
+        email.send_keys('mateuszwicki1@mail.com')
+        password1.send_keys('')
+        password2.send_keys('')
+        number.send_keys('123456789')
+        self.browser.find_element_by_tag_name('button').click()   
+        time.sleep(2)
+        self.wait.until(EC.text_to_be_present_in_element((By.XPATH, "/html/body/main/div/div/form/div[5]/div/div[2]"), "Podaj hasło!"))
+        self.browser.close()
+
+    def test_T13(self):
+        self.browser.get('http://localhost:3000/register/person')
+        name = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[2]/div/input')
+        surname = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[3]/div/input')
+        email = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[4]/div/input')
+        password1 = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[5]/div/input')
+        password2 = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[6]/div/input')
+        number = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[7]/div/input')     
+        name.send_keys('')
+        surname.send_keys('Wicki')
+        email.send_keys('mateuszwicki1@mail.com')
+        password1.send_keys('Dziennik1')
+        password2.send_keys('Dziennik1')
+        number.send_keys('123456789')
+        self.browser.find_element_by_tag_name('button').click()   
+        time.sleep(2)
+        self.wait.until(EC.text_to_be_present_in_element((By.XPATH, "/html/body/main/div/div/form/div[2]/div/div"), "Podaj imię!"))
+        self.browser.close()
+    
+    def test_T14(self):
+        self.browser.get('http://localhost:3000/register/person')
+        name = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[2]/div/input')
+        surname = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[3]/div/input')
+        email = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[4]/div/input')
+        password1 = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[5]/div/input')
+        password2 = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[6]/div/input')
+        number = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[7]/div/input')     
+        name.send_keys('Mateusz1')
+        surname.send_keys('Wicki')
+        email.send_keys('mateuszwicki1@mail.com')
+        password1.send_keys('Dziennik1')
+        password2.send_keys('Dziennik1')
+        number.send_keys('123456789')
+        self.browser.find_element_by_tag_name('button').click()   
+        time.sleep(2)
+        self.wait.until(EC.text_to_be_present_in_element((By.XPATH, "/html/body/main/div/div/form/div[2]/div/div"), "Podano błędne imie! Powinno zaczynać się z wielkiej litery i nie zawierac cyfr."))
+        self.browser.close()
+
+    def test_T15(self):
+        self.browser.get('http://localhost:3000/register/person')
+        name = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[2]/div/input')
+        surname = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[3]/div/input')
+        email = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[4]/div/input')
+        password1 = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[5]/div/input')
+        password2 = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[6]/div/input')
+        number = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[7]/div/input')     
+        name.send_keys('Mateusz')
+        surname.send_keys('')
+        email.send_keys('mateuszwicki1@mail.com')
+        password1.send_keys('Dziennik1')
+        password2.send_keys('Dziennik1')
+        number.send_keys('123456789')
+        self.browser.find_element_by_tag_name('button').click()   
+        time.sleep(2)
+        self.wait.until(EC.text_to_be_present_in_element((By.XPATH, "/html/body/main/div/div/form/div[3]/div/div"), "Podaj nazwisko!"))
+        self.browser.close()
+
+    def test_T16(self):
+        self.browser.get('http://localhost:3000/register/person')
+        name = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[2]/div/input')
+        surname = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[3]/div/input')
+        email = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[4]/div/input')
+        password1 = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[5]/div/input')
+        password2 = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[6]/div/input')
+        number = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[7]/div/input')     
+        name.send_keys('Mateusz')
+        surname.send_keys('')
+        email.send_keys('mateuszwicki1@mail.com')
+        password1.send_keys('Dziennik1')
+        password2.send_keys('Dziennik1')
+        number.send_keys('123456789')
+        self.browser.find_element_by_tag_name('button').click()
+        time.sleep(2)
+        self.wait.until(EC.text_to_be_present_in_element((By.XPATH, "/html/body/main/div/div/form/div[3]/div/div"), "Podaj nazwisko!"))
+        self.browser.close()
+
+    def test_T17(self):
+        self.browser.get('http://localhost:3000/register/person')
+        name = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[2]/div/input')
+        surname = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[3]/div/input')
+        email = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[4]/div/input')
+        password1 = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[5]/div/input')
+        password2 = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[6]/div/input')
+        number = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[7]/div/input')     
+        name.send_keys('Mateusz')
+        surname.send_keys('Wicki')
+        email.send_keys('')
+        password1.send_keys('Dziennik1')
+        password2.send_keys('Dziennik1')
+        number.send_keys('123456789')
+        self.browser.find_element_by_tag_name('button').click()
+        time.sleep(2)
+        self.wait.until(EC.text_to_be_present_in_element((By.XPATH, "/html/body/main/div/div/form/div[4]/div/div"), "Podaj adres email!"))
+        self.browser.close()
+
+    def test_T18(self):
+        self.browser.get('http://localhost:3000/register/person')
+        name = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[2]/div/input')
+        surname = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[3]/div/input')
+        email = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[4]/div/input')
+        password1 = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[5]/div/input')
+        password2 = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[6]/div/input')
+        number = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[7]/div/input')     
+        name.send_keys('Mateusz')
+        surname.send_keys('Wicki')
+        email.send_keys('mateuszwicki1gmail.com')
+        password1.send_keys('Dziennik1')
+        password2.send_keys('Dziennik1')
+        number.send_keys('123456789')
+        self.browser.find_element_by_tag_name('button').click()
+        time.sleep(2)
+        self.wait.until(EC.text_to_be_present_in_element((By.XPATH, "/html/body/main/div/div/form/div[4]/div/div"), "Podano zły format! 'example@mail.com'"))
+        self.browser.close()
+
+    def test_T19(self):
+        self.browser.get('http://localhost:3000/register/person')
+        name = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[2]/div/input')
+        surname = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[3]/div/input')
+        email = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[4]/div/input')
+        password1 = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[5]/div/input')
+        password2 = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[6]/div/input')
+        number = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[7]/div/input')     
+        name.send_keys('Mateusz')
+        surname.send_keys('Wicki')
+        email.send_keys('mateuszwicki1@gmailcom')
+        password1.send_keys('Dziennik1')
+        password2.send_keys('Dziennik1')
+        number.send_keys('123456789')
+        self.browser.find_element_by_tag_name('button').click()
+        time.sleep(2)
+        self.wait.until(EC.text_to_be_present_in_element((By.XPATH, "/html/body/main/div/div/form/div[4]/div/div"), "Podano zły format! 'example@mail.com'"))
+        self.browser.close()
+
+    def test_T20(self):
+        self.browser.get('http://localhost:3000/register/person')
+        name = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[2]/div/input')
+        surname = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[3]/div/input')
+        email = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[4]/div/input')
+        password1 = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[5]/div/input')
+        password2 = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[6]/div/input')
+        number = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[7]/div/input')     
+        name.send_keys('Mateusz')
+        surname.send_keys('Wicki')
+        email.send_keys('mateuszwicki1')
+        password1.send_keys('Dziennik1')
+        password2.send_keys('Dziennik1')
+        number.send_keys('123456789')
+        self.browser.find_element_by_tag_name('button').click()
+        time.sleep(2)
+        self.wait.until(EC.text_to_be_present_in_element((By.XPATH, "/html/body/main/div/div/form/div[4]/div/div"), "Podano zły format! 'example@mail.com'"))
+
+    def test_T21(self):
+        self.browser.get('http://localhost:3000/register/person')
+        name = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[2]/div/input')
+        surname = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[3]/div/input')
+        email = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[4]/div/input')
+        password1 = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[5]/div/input')
+        password2 = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[6]/div/input')
+        number = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[7]/div/input')     
+        name.send_keys('Mateusz')
+        surname.send_keys('Wicki')
+        email.send_keys('mateuszwicki1@gmail.com')
+        password1.send_keys('Dzie1')
+        password2.send_keys('Dzie1')
+        number.send_keys('123456789')
+        self.browser.find_element_by_tag_name('button').click()
+        time.sleep(2)
+        self.wait.until(EC.text_to_be_present_in_element((By.XPATH, "/html/body/main/div/div/form/div[5]/div/div[2]"), "Hasło musi zkładać się z 8-u znaków!"))
+
+    def test_T22(self):
+        self.browser.get('http://localhost:3000/register/person')
+        name = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[2]/div/input')
+        surname = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[3]/div/input')
+        email = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[4]/div/input')
+        password1 = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[5]/div/input')
+        password2 = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[6]/div/input')
+        number = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[7]/div/input')     
+        name.send_keys('Mateusz')
+        surname.send_keys('Wicki')
+        email.send_keys('mateuszwicki1@gmail.com')
+        password1.send_keys('Dziennik')
+        password2.send_keys('Dziennik')
+        number.send_keys('123456789')
+        self.browser.find_element_by_tag_name('button').click()
+        time.sleep(2)
+        self.wait.until(EC.text_to_be_present_in_element((By.XPATH, "/html/body/main/div/div/form/div[5]/div/div[2]"), "Hasło musi zawierać przynajmniej jedną cyfrę!"))
+
+    def test_T23(self):
+        self.browser.get('http://localhost:3000/register/person')
+        name = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[2]/div/input')
+        surname = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[3]/div/input')
+        email = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[4]/div/input')
+        password1 = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[5]/div/input')
+        password2 = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[6]/div/input')
+        number = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[7]/div/input')     
+        name.send_keys('Mateusz')
+        surname.send_keys('Wicki')
+        email.send_keys('mateuszwicki1@gmail.com')
+        password1.send_keys('dziennik1')
+        password2.send_keys('dziennik1')
+        number.send_keys('123456789')
+        self.browser.find_element_by_tag_name('button').click()
+        time.sleep(2)
+        self.wait.until(EC.text_to_be_present_in_element((By.XPATH, "/html/body/main/div/div/form/div[5]/div/div[2]"), "Hasło musi zawierać przynajmniej jedną dużą literę!"))
+
+    def test_T24(self):
+        self.browser.get('http://localhost:3000/register/person')
+        name = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[2]/div/input')
+        surname = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[3]/div/input')
+        email = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[4]/div/input')
+        password1 = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[5]/div/input')
+        password2 = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[6]/div/input')
+        number = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[7]/div/input')     
+        name.send_keys('Mateusz')
+        surname.send_keys('Wicki')
+        email.send_keys('mateuszwicki1@gmail.com')
+        password1.send_keys('Dziennik1')
+        password2.send_keys('Dziennik1')
+        number.send_keys('123456abc')
+        self.browser.find_element_by_tag_name('button').click()
+        time.sleep(2)
+        self.wait.until(EC.text_to_be_present_in_element((By.XPATH, "/html/body/main/div/div/form/div[7]/div/div"), "Zły format telefonu!"))
+
+    def test_T25(self):
+        self.browser.get('http://localhost:3000/register/person')
+        name = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[2]/div/input')
+        surname = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[3]/div/input')
+        email = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[4]/div/input')
+        password1 = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[5]/div/input')
+        password2 = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[6]/div/input')
+        number = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[7]/div/input')     
+        name.send_keys('Mateusz')
+        surname.send_keys('Wicki')
+        email.send_keys('mateuszwicki1@gmail.com')
+        password1.send_keys('Dziennik1')
+        password2.send_keys('Dziennik1')
+        number.send_keys('12345678')
+        self.browser.find_element_by_tag_name('button').click()
+        time.sleep(2)
+        self.wait.until(EC.text_to_be_present_in_element((By.XPATH, "/html/body/main/div/div/form/div[7]/div/div"), "Zły format telefonu!"))
+
+    def test_T26(self):
+        self.browser.get('http://localhost:3000/register/person')
+        name = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[2]/div/input')
+        surname = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[3]/div/input')
+        email = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[4]/div/input')
+        password1 = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[5]/div/input')
+        password2 = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[6]/div/input')
+        number = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[7]/div/input')     
+        name.send_keys('Mateusz')
+        surname.send_keys('Wicki')
+        email.send_keys('mateuszwicki1@gmail.com')
+        password1.send_keys('Dziennik1')
+        password2.send_keys('Dziennik1')
+        number.send_keys('1234567890123456')
+        self.browser.find_element_by_tag_name('button').click()
+        time.sleep(2)
+        self.wait.until(EC.text_to_be_present_in_element((By.XPATH, "/html/body/main/div/div/form/div[7]/div/div"), "Zły format telefonu!"))
+
+    
+#  ___   _   _   ____    _____   ___   _____   _   _   _____   ___    ___    _   _ 
+# |_ _| | \ | | / ___|  |_   _| |_ _| |_   _| | | | | |_   _| |_ _|  / _ \  | \ | |
+#  | |  |  \| | \___ \    | |    | |    | |   | | | |   | |    | |  | | | | |  \| |
+#  | |  | |\  |  ___) |   | |    | |    | |   | |_| |   | |    | |  | |_| | | |\  |
+# |___| |_| \_| |____/    |_|   |___|   |_|    \___/    |_|   |___|  \___/  |_| \_|
+#     
     """ T7 Rejestracja instytucji poprawne"""
     def test_T7(self):
         self.browser.get('http://localhost:3000/register/institution')
