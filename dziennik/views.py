@@ -3,8 +3,8 @@ from django.http import JsonResponse
 from django.core.mail import EmailMessage
 from rest_framework.authtoken.models import Token
 from rest_framework import viewsets, permissions, exceptions
-from .serializers import UserRegisterSerializer, UsersSerializer, UsersActivatedSerializer, InstitutionRegisterSerializer, InstitutionNameExistSerializer, UsersGetActivities
-from .models import Activity, UserActivate
+from .serializers import UserRegisterSerializer, UsersSerializer, UsersActivatedSerializer, InstitutionRegisterSerializer, InstitutionNameExistSerializer, UsersGetActivities, UserCreateChildSerializer, EmployeeRegisterSerializer
+from .models import Activity, Employee, UserActivate, Child
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
@@ -121,6 +121,36 @@ class UsersActivationAccountViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         return self.serializer_classes.get(self.action, self.default_serializer_class)
 
+#
+# CHILD
+#
+
+# Widok tworzenia profilu dziecka
+class UserCreateChildViewSet(viewsets.ModelViewSet):
+    queryset = Child.objects.none()
+
+    # Wymagane podanie tokena w nagłowku zapytania
+    authentication_classes = [TokenAuthentication, ]
+    permission_classes = [IsAuthenticated, ]
+    
+
+    # Lista serializerii dla danech typów zapytań
+    serializer_classes = {
+        'POST': UserCreateChildSerializer,
+    }
+
+    # Jeżeli danego zapytania nie ma na liście serializer_classes to wykorzystany będzie domyślny
+    default_serializer_class = UserCreateChildSerializer
+    
+    # Metoda wybiera z jakiego serializera będziemy korzystać
+    def get_serializer_class(self):
+        return self.serializer_classes.get(self.action, self.default_serializer_class)
+
+
+#
+# ACTIVITIES
+#
+
 # Widok do pobrania informacji powiazanych z użytkownikiem
 class UsersGetActivitiesViewSet(viewsets.ModelViewSet):
     queryset = Activity.objects.none()
@@ -202,3 +232,22 @@ class InstitutionNameExistViewSet(viewsets.ModelViewSet):
 # | |___  | |  | | |  __/  | |___  | |_| |   | |   | |___  | |___ 
 # |_____| |_|  |_| |_|     |_____|  \___/    |_|   |_____| |_____|
 #  
+
+# Widok rejestrowania/tworzenia profilu pracownika
+class EmployeeRegisterViewSet(viewsets.ModelViewSet):
+    queryset = Employee.objects.none()
+    
+    authentication_classes = [TokenAuthentication, ]
+    permission_classes = [IsAuthenticated, ]
+
+    # Lista serializerii dla danech typów zapytań
+    serializer_classes = {
+        'POST': EmployeeRegisterSerializer,
+    }
+
+    # Jeżeli danego zapytania nie ma na liście serializer_classes to wykorzystany będzie domyślny
+    default_serializer_class = EmployeeRegisterSerializer
+    
+    # Metoda wybiera z jakiego serializera będziemy korzystać
+    def get_serializer_class(self):
+        return self.serializer_classes.get(self.action, self.default_serializer_class)

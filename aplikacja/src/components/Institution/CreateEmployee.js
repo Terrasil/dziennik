@@ -13,6 +13,38 @@ function CreateEmployee(props) {
     const [ errors, setErrors ] = useState({})
     const [ showmodal, setShowModal ] = useState(false)
 
+    const create = async () => {
+      // Przygotowanie informacji o tworzonym użytkowniku
+      const registerData = {}
+      registerData.first_name = form.firstname
+      registerData.last_name = form.lastname
+      registerData.email = form.email
+      registerData.username = form.email
+      registerData.specialization = form.specialization
+      registerData.password = 'empty'
+      registerData.phone = form.phone || ' '
+      registerData.institution_id = props.userdata.id
+      registerData.role = 'employee'
+      // Wykonanie zapytania - rejestracji
+      const response = await fetch('http://localhost:8000/api/employee-register/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Token ${props.csrftoken}` // Musimy podać nasz CSRFToken aby otrzymać odpowiedź
+        },
+        body: JSON.stringify(registerData) // Przygotowane dane
+      }).catch( error => console.error(error))
+      const data = await response.json()
+      console.log(data)
+      if(data.specialization === undefined){
+        // Nieudana rejestracja
+        return 'Nie udało się stworzyć profilu pracownika!'
+      }else{
+        // Udana rejestracja
+        return undefined
+      }
+    }
+
    // Pobieranie informacji z formularza rejestracji
    const setField = (field, value) => {
     setForm({
@@ -117,10 +149,19 @@ function CreateEmployee(props) {
       newErrors.phone = 'Zły format telefonu!'
     }
 
-    // Rejestracja
+    // Tworzenie profilu pracownika
     newErrors.register = undefined
     if(formValidated){
+      const createReceive = await create()
+      if(createReceive !== undefined){
+        // Wystąpił błąd
+        // Ustawiamy error do wyświetlenia
+        newErrors.register = createReceive
+      }else{
+        // Nie wystąpił błąd
+        // Pokazanie modal'u
         setShowModal(true)
+      }
     }
 
     return newErrors
@@ -145,15 +186,12 @@ function CreateEmployee(props) {
       >
         <Modal.Header style={{border:'none'}} closeButton>
           <Modal.Title id="contained-modal-title-vcenter">
-            Dziękujemy za rejestrację
+            Utworzono profil pracownika
           </Modal.Title>
         </Modal.Header>
         <Modal.Body style={{border:'none'}}>
-          <p>Wysłaliśmy wiadomość z linkiem aktywacyjnym na podany adres email w celu weryfikacji.</p>
+          <p>Wysłaliśmy wiadomość z linkiem aktywacyjnym oraz automatycznie wygenerowanym hasłem na podany adres email w celu weryfikacji.</p>
         </Modal.Body>
-        <Modal.Footer className="align-left" style={{border:'none'}}>
-          <a href="../../login" style={{float:'right'}} id="signup"><Button className="rounded-pill">Wróć do panelu logowania</Button></a>
-        </Modal.Footer>
       </Modal>
     )
   }

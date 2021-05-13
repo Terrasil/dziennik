@@ -86,7 +86,6 @@ class Employee(models.Model):
     institution_id = models.ForeignKey('Institution', on_delete=models.CASCADE)
     user_id = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     specialization = models.CharField(max_length = 20,default=True)
-    creation_date = models.DateTimeField(default=timezone.now())
 
     def __str__(self):
         return self.user_id.first_name +" "+ self.user_id.last_name

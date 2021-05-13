@@ -64,7 +64,7 @@ function App(){
     const localStoredCSRFToken = localStorage.getItem('csrftoken')
     setCSRFToken(localStoredCSRFToken)
     if(localStoredCSRFToken!==undefined){
-      //updateUserDate(localStoredCSRFToken)
+      updateUserDate(localStoredCSRFToken)
     }
     const localStoredUserData = JSON.parse(localStorage.getItem('userdata')) ? JSON.parse(localStorage.getItem('userdata'))[0] : undefined
     setUserData(localStoredUserData)

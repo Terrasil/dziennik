@@ -66,7 +66,7 @@ function Header(props){
               <Nav.Link className="float-right" href="/create/activity">Stwórz zajęcia</Nav.Link>
               <Nav.Link className="float-right" href="/create/employee">Stwórz profil pracownika</Nav.Link>
             </>) : null }
-            { props.userdata?.role === 'emplyee' ? ( <>
+            { props.userdata?.role === 'employee' ? ( <>
             </>) : null }
             { props.userdata?.role === 'admin' ? ( <>
               <Nav.Link className="float-right" >Panel administratora</Nav.Link>

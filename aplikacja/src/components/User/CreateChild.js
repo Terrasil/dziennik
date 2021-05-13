@@ -13,6 +13,32 @@ function CreateChild(props) {
     const [ errors, setErrors ] = useState({})
     const [ showmodal, setShowModal ] = useState(false)
 
+    const create = async () => {
+      // Przygotowanie informacji o tworzonym użytkowniku
+      const registerData = {}
+      registerData.first_name = form.firstname
+      registerData.last_name = form.lastname
+      registerData.age = form.age
+      registerData.parent_id = props.userdata.id
+      // Wykonanie zapytania - rejestracji
+      const response = await fetch('http://localhost:8000/api/users-create-child/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Token ${props.csrftoken}` // Musimy podać nasz CSRFToken aby otrzymać odpowiedź
+        },
+        body: JSON.stringify(registerData) // Przygotowane dane
+      }).catch( error => console.error(error))
+      const data = await response.json()
+      if(Object.keys(data).length > 0){
+        // Nieudana rejestracja
+        return 'Nie udało się stworzyć profilu dziecka!'
+      }else{
+        // Udana rejestracja
+        return undefined
+      }
+    }
+
    // Pobieranie informacji z formularza rejestracji
    const setField = (field, value) => {
     setForm({
@@ -70,26 +96,35 @@ function CreateChild(props) {
     // Zły format wieku
     //eslint-disable-next-line
     if( !/^[0-9]{1,2}/.test(age)){
-        formValidated = false
-        newErrors.age = 'Podano błędny wiek! Wiek powinienin zawierać wyłącznie cyfry.'
-      }
+      formValidated = false
+      newErrors.age = 'Podano błędny wiek! Wiek powinienin zawierać wyłącznie cyfry.'
+    }
 
-      // Prawidłowy zakres wieku
-      if ( age < 1 || age > 99){
-        formValidated = false
-        newErrors.age = 'Podano zły zakres wieku!'
-      }
+    // Prawidłowy zakres wieku
+    if ( age < 1 || age > 99){
+      formValidated = false
+      newErrors.age = 'Podano zły zakres wieku!'
+    }
 
-      // Nie podano wieku
-      if ( !age || age === '' ) {
-        formValidated = false
-        newErrors.age = 'Podaj wiek!'
-      }
+    // Nie podano wieku
+    if ( !age || age === '' ) {
+      formValidated = false
+      newErrors.age = 'Podaj wiek!'
+    }
 
-    // Rejestracja
+    // Tworzenie profilu dziecka
     newErrors.register = undefined
     if(formValidated){
+      const createReceive = await create()
+      if(createReceive !== undefined){
+        // Wystąpił błąd
+        // Ustawiamy error do wyświetlenia
+        newErrors.register = createReceive
+      }else{
+        // Nie wystąpił błąd
+        // Pokazanie modal'u
         setShowModal(true)
+      }
     }
 
     return newErrors
@@ -108,15 +143,13 @@ function CreateChild(props) {
       >
         <Modal.Header style={{border:'none'}} closeButton>
           <Modal.Title id="contained-modal-title-vcenter">
-            Dziękujemy za rejestrację
+            Utworzono profil dziecka
           </Modal.Title>
         </Modal.Header>
         <Modal.Body style={{border:'none'}}>
-          <p>Wysłaliśmy wiadomość z linkiem aktywacyjnym na podany adres email w celu weryfikacji.</p>
+          <p>Możesz teraz zarządzać zajęciami swojego dziecka oraz przypisać je do istniejacych instytucji.</p>
         </Modal.Body>
-        <Modal.Footer className="align-left" style={{border:'none'}}>
-          <a href="../../login" style={{float:'right'}} id="signup"><Button className="rounded-pill">Wróć do panelu logowania</Button></a>
-        </Modal.Footer>
+        
       </Modal>
     )
   }
@@ -170,7 +203,7 @@ function CreateChild(props) {
               <Alert variant={'danger'} show={ !!errors.register } type='invalid'>{ errors.register }</Alert>
             </Form.Group>
             <Form.Group className="text-center pt-4">
-              <Button className="rounded-pill col-6" type='submit' onClick={ handleSubmit }>Stwórz pracownika</Button>
+              <Button className="rounded-pill col-6" type='submit' onClick={ handleSubmit }>Stwórz profil dziecka</Button>
             </Form.Group>
           </Form>
         </div>

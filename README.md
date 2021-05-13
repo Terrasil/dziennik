@@ -17,10 +17,10 @@ Celem projektu jest łatwiejsza organizacja zajęć pozalekcyjnych - sprawne prz
 - [x] Logowanie
 - [x] Wysyłanie emaili
 - [x] Aktywacja konta
-- [ ] Widok planu
-  - [ ] Dzień
-  - [ ] Tydzień
-  - [ ] Miesiąć
+- [x] Widok planu
+  - [x] Dzień
+  - [x] Tydzień
+  - [x] Miesiąć
 - [x] Zapamiętanie użytkownika
 - [x] Wylogowanie
 #### **UŻYTKOWNIK**
@@ -28,7 +28,7 @@ Celem projektu jest łatwiejsza organizacja zajęć pozalekcyjnych - sprawne prz
 - [ ] Podglą zajęć
   - [ ] Ustawienie przypomnienia
   - [ ] Wysyłanie wiadomości do prowadzącego
-- [ ] Tworzenie profilu dziecka
+- [x] Tworzenie profilu dziecka
   - [ ] Zmiana danych dziecka
   - [ ] Przypisanie dziecka do instytucji
   - [ ] Usuwanie profilu dziecka
@@ -39,7 +39,7 @@ Celem projektu jest łatwiejsza organizacja zajęć pozalekcyjnych - sprawne prz
 #### **INSTYTUCJA**
 - [x] Rejestracja
 - [ ] Tworzenie zajęć
-- [ ] Tworzenie profilu pracownika
+- [x] Tworzenie profilu pracownika
 - [ ] Podglą zajęć
   - [ ] Aktualizacja zajęć
   - [ ] Usuwanie zajęć

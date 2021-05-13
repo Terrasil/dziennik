@@ -18,7 +18,7 @@ from django.urls import path, include
 from rest_framework import routers
 from rest_framework.authtoken.views import obtain_auth_token
 
-from .views import UserRegisterViewSet, UsersViewSet, UsersActivatedViewSet, UsersActivationAccountViewSet, InstitutionRegisterViewSet, InstitutionNameExistViewSet, UsersGetActivitiesViewSet 
+from .views import UserRegisterViewSet, UsersViewSet, UsersActivatedViewSet, UsersActivationAccountViewSet, InstitutionRegisterViewSet, InstitutionNameExistViewSet, UsersGetActivitiesViewSet, UserCreateChildViewSet, EmployeeRegisterViewSet 
 
 router = routers.DefaultRouter()
 # User
@@ -26,13 +26,15 @@ router.register('users', UsersViewSet)
 router.register('users-register', UserRegisterViewSet)
 router.register('users-activated', UsersActivatedViewSet)
 router.register('users-activation', UsersActivationAccountViewSet)
-router.register('user-activities', UsersGetActivitiesViewSet)
+router.register('users-activities', UsersGetActivitiesViewSet)
+router.register('users-create-child', UserCreateChildViewSet)
 # Institution
 router.register('institutions-register', InstitutionRegisterViewSet)
 router.register('institutions-exist', InstitutionNameExistViewSet)
+# Employee
+router.register('employee-register', EmployeeRegisterViewSet)
 
-urlpatterns = [
-    
+urlpatterns = [  
     path('panel/admin/', include('smuggler.urls')),
     path('panel/admin/', admin.site.urls),
     path('api/', include(router.urls)),
