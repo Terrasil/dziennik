@@ -37,7 +37,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="G:\AMW\dziennik\venv"
+VIRTUAL_ENV="C:\Users\brome\Desktop\partyk_Dziennik\dziennik\venv"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"

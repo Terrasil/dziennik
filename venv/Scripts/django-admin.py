@@ -1,4 +1,4 @@
-#!g:\amw\dziennik\venv\scripts\python.exe
+#!c:\users\brome\desktop\partyk_dziennik\dziennik\venv\scripts\python.exe
 # When the django-admin.py deprecation ends, remove this script.
 import warnings
 
