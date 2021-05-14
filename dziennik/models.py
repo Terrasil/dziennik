@@ -67,6 +67,18 @@ class UserActivate(models.Model):
         verbose_name = "UserActivate"
         verbose_name_plural = "UserActivations"
 
+class ChangeEmail(models.Model):
+    user_id = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    new_email = models.EmailField(_('email address'), unique=True)
+    activate_code = models.CharField(max_length=64)
+    
+    def __str__(self):
+        return self.activate_code
+
+    class Meta:
+        verbose_name = "ChangeEmail"
+        verbose_name_plural = "ChangeEmails"
+
 class Institution(models.Model):
     user_id = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     category = models.CharField(max_length=200)

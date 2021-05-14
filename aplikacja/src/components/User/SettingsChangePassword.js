@@ -6,9 +6,10 @@ import Image from 'react-bootstrap/Image'
 import Logo from '../../img/logo.png'
 import { Alert, InputGroup, Modal } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faUser, faUniversity } from '@fortawesome/free-solid-svg-icons'
+import { faChevronLeft} from '@fortawesome/free-solid-svg-icons'
+import Header from './../Header';
 
-function RegisterPerson(props){
+function SettingsChangePassword(props){
 
   const [ form, setForm ] = useState({})
   const [ errors, setErrors ] = useState({})
@@ -62,35 +63,51 @@ function RegisterPerson(props){
 
   // Walidacja formularza
   const validation = async () => {
-    const { firstname, lastname } = form
+    const { password, repassword } = form
     const newErrors = {}
 
     let formValidated = true
 
-    // FirstName errory
-    // Zły format nazwiska
-    //eslint-disable-next-line
-    if( !/^[A-ZĘÓŁŚĄŻŹĆŃ]+[a-zA-ZęółśążźćńĘÓŁŚĄŻŹĆŃ]{3,}$/.test(firstname)){
+
+    // Password errory
+    // Nie podano hasła
+    if ( !password || password === '' ) {
       formValidated = false
-      newErrors.firstname = 'Podano błędne imie! Powinno zaczynać się z wielkiej litery i nie zawierac cyfr.'
+      newErrors.password = ['Podaj hasło!']
     }
-    // Nie podano imienia
-    if ( !firstname || firstname === '' ) {
-      formValidated = false
-      newErrors.firstname = 'Podaj imię!'
+    else{
+      const passwordRegexValidations = []
+      // Hasło zakrótkie (min. 8 znaków)
+      if(password.length < 8) {
+        passwordRegexValidations.push('Hasło musi zkładać się z 8-u znaków!')
+      }
+      // Brak wielkiej litery
+      //eslint-disable-next-line
+      if(!/\w*[A-ZĘÓŁŚĄŻŹĆŃ]\w*/g.test(password)) {
+        passwordRegexValidations.push('Hasło musi zawierać przynajmniej jedną dużą literę!')
+      }
+      // Brak cyfry
+      //eslint-disable-next-line
+      if(!/\w*[0-9]\w*/g.test(password)) {
+        passwordRegexValidations.push('Hasło musi zawierać przynajmniej jedną cyfrę!')
+      }
+      // Jeżeli cokolwiek dodano do passwordRegexValidations - ustawiamy jako error
+      if(passwordRegexValidations.length > 0){
+        formValidated = false
+        newErrors.password = passwordRegexValidations
+      }
     }
-    
-    // LastName errory
-    // Zły format nazwiska
-    //eslint-disable-next-line
-    if( !/^([A-ZĘÓŁŚĄŻŹĆŃ]+[a-zA-ZęółśążźćńĘÓŁŚĄŻŹĆŃ][a-zA-ZęółśążźćńĘÓŁŚĄŻŹĆŃ\'\-\s]+){1,}$/.test(lastname)){
+
+    // RePassword errory
+    // Hasła się nie zgadzają
+    if ( password !== repassword ) {
       formValidated = false
-      newErrors.lastname = 'Podano błędne nazwisko! Powinno zaczynać się z wielkiej litery i nie zawierac cyfr.'
+      newErrors.repassword = 'Hasła się nie zgadzają!'
     }
-    // Nie podano nazwiska
-    if ( !lastname || lastname === '' ) {
+    // Nie powtórzono hasła
+    if ( !repassword || repassword === '' ) {
       formValidated = false
-      newErrors.lastname = 'Podaj nazwisko!'
+      newErrors.repassword = 'Powtórz hasło!'
     }
 
     // Rejestracja
@@ -152,41 +169,44 @@ function RegisterPerson(props){
 
   return (
     <>
-      { redirect() }
       { modal() }
-      <div className="container h-100">
+      <Header csrftoken={props.csrftoken} userdata={ props.userdata}/>
+      <div className="container h-100" style={{top: "3.5rem", minHeight: "calc(100%-3.5rem)"}}>
         <div className="row h-100 justify-content-center align-items-center">
           <Form className="col-md-6">
-            <Form.Group className="text-center pb-4 container-fluid">
-              <div className="row align-items-start">
-                <div className="col" style={{paddingTop:'1rem', paddingBottom:'1rem',borderBottom:'0.5rem solid dodgerblue'}}>
-                  <FontAwesomeIcon style={{fontSize: 'min(25vw, 900%)'}} color="dodgerblue" icon={faUser} />
-                </div>
-                <div className="col" style={{paddingTop:'1rem', paddingBottom:'1rem',borderBottom:'0.5rem solid transparent'}}>
-                  <a href="../register/institution" id="signup"><FontAwesomeIcon style={{fontSize: 'min(25vw, 900%)'}} color="silver" icon={faUniversity} /></a>
-                </div>
-              </div>
+            <Form.Group>
+              <Button className='w-100 text-left' onClick={()=>{window.location.href = '/settings'}}variant='light'><FontAwesomeIcon className='mr-1' icon={faChevronLeft} /> Wróć do ustawień</Button>
+              <hr/>  
+              <h5>Zmiana hasła</h5>
+              <hr class='horizontal-rule'/> 
             </Form.Group>
             <Form.Group>
-              <Form.Label>Podaj imię</Form.Label>
+              <Form.Label>Hasło</Form.Label>
               <InputGroup className="mb-3">
                 <Form.Control 
-                  type='text' name="firstname"
-                  onChange={ e => setField('firstname', e.target.value) }
-                  isInvalid={ !!errors.firstname }
+                  type='password' name="password"
+                  onChange={ e => setField('password', e.target.value) }
+                  isInvalid={ !!errors.password }
+                  data-toggle="password"
                 />
-                <Form.Control.Feedback type='invalid'>{ errors.firstname }</Form.Control.Feedback>
+                <Form.Control.Feedback style={{color:'gray', display:'block'}}>Hasło musi składać się z 8-miu znaków i zawierac wielką literę oraz cyfrę.</Form.Control.Feedback>
+                {
+                  errors.password?.map((suberror,index) => (
+                    <Form.Control.Feedback key={index} type='invalid'>{ suberror }</Form.Control.Feedback>
+                  ))  
+                }
               </InputGroup>
             </Form.Group>
             <Form.Group>
-              <Form.Label>Podaj nazwisko</Form.Label>
+              <Form.Label>Powtórz hasło</Form.Label>
               <InputGroup className="mb-3">
                 <Form.Control 
-                  type='text' name="lastname"
-                  onChange={ e => setField('lastname', e.target.value) }
-                  isInvalid={ !!errors.lastname }
+                  type='password' name="repassword"
+                  onChange={ e => setField('repassword', e.target.value) }
+                  isInvalid={ !!errors.repassword }
+                  data-toggle="repassword"
                 />
-                <Form.Control.Feedback type='invalid'>{ errors.lastname }</Form.Control.Feedback>
+                <Form.Control.Feedback type='invalid'>{ errors.repassword }</Form.Control.Feedback>
               </InputGroup>
             </Form.Group>
             <Form.Group>
@@ -202,4 +222,4 @@ function RegisterPerson(props){
   )
 }
 
-export default RegisterPerson;
+export default SettingsChangePassword;

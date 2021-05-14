@@ -35,7 +35,6 @@ function CreateEmployee(props) {
         body: JSON.stringify(registerData) // Przygotowane dane
       }).catch( error => console.error(error))
       const data = await response.json()
-      console.log(data)
       if(data.specialization === undefined){
         // Nieudana rejestracja
         return 'Nie udało się stworzyć profilu pracownika!'
@@ -166,13 +165,15 @@ function CreateEmployee(props) {
 
     return newErrors
   }
-/*
+
   const redirect = () => {
-    if (!!props.csrftoken) {
-      return <Redirect to='/' />
+    if (!!props.userdata) {
+      console.log(props.userdata?.role)
+      if(props.userdata?.role !== 'institution'){
+        return <Redirect to='/settings' />
+      }
     }
   }
-*/
   const modal = () => {
     return (
       <Modal
@@ -198,11 +199,16 @@ function CreateEmployee(props) {
 
   return (
     <>
+      { redirect() }
       { modal() }
       <Header csrftoken={props.csrftoken} userdata={ props.userdata}/>
       <div className="container h-100" style={{top: "3.5rem", minHeight: "calc(100%-3.5rem)"}}>
         <div className="row h-100 justify-content-center align-items-center">
-        <Form className="col-md-6">
+          <Form className="col-md-6">
+            <Form.Group>
+              <h5>TWORZENIE PROFILU PRACOWNIKA</h5>
+              <hr class='horizontal-rule'/>  
+            </Form.Group>
             <Form.Group>
               <Form.Label>Podaj imię</Form.Label>
               <InputGroup className="mb-3">

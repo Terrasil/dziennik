@@ -9,6 +9,12 @@ import CreateActivity from './components/Institution/CreateActivity'
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import CreateEmployee from './components/Institution/CreateEmployee';
 import CreateChild from './components/User/CreateChild';
+import Settings from './components/Settings';
+import Children from './components/User/Children';
+import SettingsChangeInstitutionData from './components/Institution/SettingsChangeInstitutionData';
+import SettingsChangeEmail from './components/User/SettingsChangeEmail';
+import SettingsChangePassword from './components/User/SettingsChangePassword';
+import SettingsChangePersonData from './components/User/SettingsChangePersonData';
 
 function App(){
 
@@ -112,6 +118,24 @@ function App(){
         </Route>
         <Route path="/create/child">
             <CreateChild userdata={userdata} csrftoken={csrftoken}/>
+        </Route>
+        <Route path="/children">
+            <Children userdata={userdata} csrftoken={csrftoken}/>
+        </Route>
+        <Route path="/settings/change/data/institution">
+            <SettingsChangeInstitutionData userdata={userdata} csrftoken={csrftoken}/>
+        </Route>
+        <Route path="/settings/change/data/person">
+            <SettingsChangePersonData userdata={userdata} csrftoken={csrftoken}/>
+        </Route>
+        <Route path="/settings/change/email">
+            <SettingsChangeEmail userdata={userdata} csrftoken={csrftoken}/>
+        </Route>
+        <Route path="/settings/change/password">
+            <SettingsChangePassword userdata={userdata} csrftoken={csrftoken}/>
+        </Route>
+        <Route path="/settings">
+            <Settings userdata={userdata} csrftoken={csrftoken}/>
         </Route>
 
         <Route path="/">

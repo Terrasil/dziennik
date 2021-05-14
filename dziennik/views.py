@@ -3,8 +3,7 @@ from django.http import JsonResponse
 from django.core.mail import EmailMessage
 from rest_framework.authtoken.models import Token
 from rest_framework import viewsets, permissions, exceptions
-from .serializers import UserRegisterSerializer, UsersSerializer, UsersActivatedSerializer, InstitutionRegisterSerializer, InstitutionNameExistSerializer, UsersGetActivities, UserCreateChildSerializer, EmployeeRegisterSerializer
-from .models import Activity, Employee, UserActivate, Child
+from . import serializers, models
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
@@ -23,11 +22,11 @@ class UserRegisterViewSet(viewsets.ModelViewSet):
 
     # Lista serializerii dla danech typów zapytań
     serializer_classes = {
-        'POST': UserRegisterSerializer,
+        'POST': serializers.UserRegisterSerializer,
     }
 
     # Jeżeli danego zapytania nie ma na liście serializer_classes to wykorzystany będzie domyślny
-    default_serializer_class = UserRegisterSerializer
+    default_serializer_class = serializers.UserRegisterSerializer
     
     # Metoda wybiera z jakiego serializera będziemy korzystać
     def get_serializer_class(self):
@@ -42,11 +41,11 @@ class UsersViewSet(viewsets.ModelViewSet):
     
     # Lista serializerii dla danech typów zapytań
     serializer_classes = {
-        'GET': UsersSerializer,
+        'GET': serializers.UsersSerializer,
     }
 
     # Jeżeli danego zapytania nie ma na liście serializer_classes to wykorzystany będzie domyślny
-    default_serializer_class = UsersSerializer
+    default_serializer_class = serializers.UsersSerializer
     
     # Metoda przygotowuje nam dane do zwrócenia - my potrzebujemy informacji o jednym użytkowniku
     def get_queryset(self):
@@ -71,11 +70,11 @@ class UsersActivatedViewSet(viewsets.ModelViewSet):
 
     # Lista serializerii dla danech typów zapytań
     serializer_classes = {
-        'GET': UsersActivatedSerializer,
+        'GET': serializers.UsersActivatedSerializer,
     }
 
     # Jeżeli danego zapytania nie ma na liście serializer_classes to wykorzystany będzie domyślny
-    default_serializer_class = UsersActivatedSerializer
+    default_serializer_class = serializers.UsersActivatedSerializer
     
     # Metoda przygotowuje nam dane do zwrócenia - my potrzebujemy informacji o jednym użytkowniku
     def get_queryset(self):
@@ -97,16 +96,16 @@ class UsersActivationAccountViewSet(viewsets.ModelViewSet):
 
     # Lista serializerii dla danech typów zapytań
     serializer_classes = {
-        'GET': UsersActivatedSerializer,
+        'GET': serializers.UsersActivatedSerializer,
     }
 
     # Jeżeli danego zapytania nie ma na liście serializer_classes to wykorzystany będzie domyślny
-    default_serializer_class = UsersActivatedSerializer
+    default_serializer_class = serializers.UsersActivatedSerializer
     
     # Metoda przygotowuje nam dane do zwrócenia - my potrzebujemy informacji o jednym użytkowniku
     def get_queryset(self):
         # Zwracamy uzytkownika
-        activation = UserActivate.objects.filter(activate_code=self.request.query_params.get('code'))
+        activation = models.UserActivate.objects.filter(activate_code=self.request.query_params.get('code'))
         user = get_user_model().objects.none()
         if(activation):
             user = [a.user_id for a in activation]
@@ -127,7 +126,7 @@ class UsersActivationAccountViewSet(viewsets.ModelViewSet):
 
 # Widok tworzenia profilu dziecka
 class UserCreateChildViewSet(viewsets.ModelViewSet):
-    queryset = Child.objects.none()
+    queryset = models.Child.objects.none()
 
     # Wymagane podanie tokena w nagłowku zapytania
     authentication_classes = [TokenAuthentication, ]
@@ -136,16 +135,101 @@ class UserCreateChildViewSet(viewsets.ModelViewSet):
 
     # Lista serializerii dla danech typów zapytań
     serializer_classes = {
-        'POST': UserCreateChildSerializer,
+        'POST': serializers.UserCreateChildSerializer,
     }
 
     # Jeżeli danego zapytania nie ma na liście serializer_classes to wykorzystany będzie domyślny
-    default_serializer_class = UserCreateChildSerializer
+    default_serializer_class = serializers.UserCreateChildSerializer
     
     # Metoda wybiera z jakiego serializera będziemy korzystać
     def get_serializer_class(self):
         return self.serializer_classes.get(self.action, self.default_serializer_class)
 
+# Widok usuwania profilu dziecka
+class UserDeleteChildViewSet(viewsets.ModelViewSet):
+    queryset = models.Child.objects.none()
+
+    # Wymagane podanie tokena w nagłowku zapytania
+    authentication_classes = [TokenAuthentication, ]
+    permission_classes = [IsAuthenticated, ]
+    
+
+    # Lista serializerii dla danech typów zapytań
+    serializer_classes = {
+        'get': serializers.UserChildDeleteSerializer,
+    }
+
+    # Jeżeli danego zapytania nie ma na liście serializer_classes to wykorzystany będzie domyślny
+    default_serializer_class = serializers.UserChildDeleteSerializer
+    
+    
+    # Metoda przygotowuje nam dane do zwrócenia - pusty [] gdy usuwamy dane dziecko
+    def get_queryset(self):
+        # Usuwamy dziecko
+        child = models.Child.objects.filter(id=int(self.request.query_params.get('child')))
+        _child = child
+        child.delete()
+        return _child
+
+    # Metoda wybiera z jakiego serializera będziemy korzystać
+    def get_serializer_class(self):
+        return self.serializer_classes.get(self.action, self.default_serializer_class)
+
+# Widok aktualizowania profilu dziecka
+class UserUpdateChildViewSet(viewsets.ModelViewSet):
+    queryset = models.Child.objects.none()
+
+    # Wymagane podanie tokena w nagłowku zapytania
+    authentication_classes = [TokenAuthentication, ]
+    permission_classes = [IsAuthenticated, ]
+    
+
+    # Lista serializerii dla danech typów zapytań
+    serializer_classes = {
+        'post': serializers.UserChildUpdateSerializer,
+    }
+
+    # Jeżeli danego zapytania nie ma na liście serializer_classes to wykorzystany będzie domyślny
+    default_serializer_class = serializers.UserChildUpdateSerializer
+
+    # Metoda wybiera z jakiego serializera będziemy korzystać
+    def get_serializer_class(self):
+        return self.serializer_classes.get(self.action, self.default_serializer_class)
+
+# Widok listy dzieci + ich przypisania do instytucji
+class UserChildrenViewSet(viewsets.ModelViewSet):
+    queryset = models.Child.objects.none()
+
+    # Wymagane podanie tokena w nagłowku zapytania
+    authentication_classes = [TokenAuthentication, ]
+    permission_classes = [IsAuthenticated, ]
+    
+
+    # Lista serializerii dla danech typów zapytań
+    serializer_classes = {
+        'GET': serializers.UserChildrenSerializer,
+    }
+
+    # Jeżeli danego zapytania nie ma na liście serializer_classes to wykorzystany będzie domyślny
+    default_serializer_class = serializers.UserChildrenSerializer
+    
+    # Metoda przygotowuje nam dane do zwrócenia - my potrzebujemy informacji o dzieciach użytkownika oraz ich przynalezności do instytucji
+    def get_queryset(self):
+        # Zwracamy uzytkownika
+        children = models.Child.objects.filter(parent_id=int(self.request.query_params.get('parent')))
+        for child in children:
+            assignments = models.Assignment.objects.filter(child_id=child)
+            _assigments = dict()
+            for assignment in assignments:
+                _assigments[str(assignment.id)]=dict()
+                _assigments[str(assignment.id)]["name"] = assignment.institution_id.user_id.username
+                _assigments[str(assignment.id)]["status"] = assignment.status
+            setattr(child,'assigments',_assigments)
+        return children
+
+    # Metoda wybiera z jakiego serializera będziemy korzystać
+    def get_serializer_class(self):
+        return self.serializer_classes.get(self.action, self.default_serializer_class)
 
 #
 # ACTIVITIES
@@ -153,7 +237,7 @@ class UserCreateChildViewSet(viewsets.ModelViewSet):
 
 # Widok do pobrania informacji powiazanych z użytkownikiem
 class UsersGetActivitiesViewSet(viewsets.ModelViewSet):
-    queryset = Activity.objects.none()
+    queryset = models.Activity.objects.none()
 
     # Wymagane podanie tokena w nagłowku zapytania
     authentication_classes = []
@@ -161,19 +245,19 @@ class UsersGetActivitiesViewSet(viewsets.ModelViewSet):
 
     # Lista serializerii dla danech typów zapytań
     serializer_classes = {
-        'GET': UsersGetActivities,
+        'GET': serializers.UsersGetActivities,
     }
 
     # Jeżeli danego zapytania nie ma na liście serializer_classes to wykorzystany będzie domyślny
-    default_serializer_class = UsersGetActivities
+    default_serializer_class = serializers.UsersGetActivities
     
     # Metoda przygotowuje nam dane do zwrócenia
     def get_queryset(self):
         # Zwracamy uzytkownika
-        activities = Activity.objects.filter()
-        for a in activities:
-            setattr(a,'children','children')
-            setattr(a,'employee','employee')
+        activities = models.Activity.objects.filter()
+        for activity in activities:
+            setattr(activity,'children','children')
+            setattr(activity,'employee','employee')
         return activities
 
 
@@ -188,17 +272,44 @@ class UsersGetActivitiesViewSet(viewsets.ModelViewSet):
 # |___| |_| \_| |____/    |_|   |___|   |_|    \___/    |_|   |___|  \___/  |_| \_|
 #                                                                                  
 
+# Zwraca listę instytucji
+class InstitutionsViewSet(viewsets.ModelViewSet):
+    queryset = models.Institution.objects.all()
+
+    authentication_classes = [TokenAuthentication, ]
+    permission_classes = [IsAuthenticated, ]
+
+    # Lista serializerii dla danech typów zapytań
+    serializer_classes = {
+        'GET': serializers.InstitutionsSerializer,
+    }
+
+    # Jeżeli danego zapytania nie ma na liście serializer_classes to wykorzystany będzie domyślny
+    default_serializer_class = serializers.InstitutionsSerializer
+
+    # Dodanie nazwy do zwracanych instytucji
+    def get_queryset(self):
+        institutions = models.Institution.objects.all()
+        for institution in institutions:
+            name = institution.user_id.username
+            setattr(institution, 'name', name)
+        return institutions
+
+    # Metoda wybiera z jakiego serializera będziemy korzystać
+    def get_serializer_class(self):
+        return self.serializer_classes.get(self.action, self.default_serializer_class)
+
 # Widok rejestrowania/tworzenia instytucji
 class InstitutionRegisterViewSet(viewsets.ModelViewSet):
     queryset = get_user_model().objects.none()
 
     # Lista serializerii dla danech typów zapytań
     serializer_classes = {
-        'POST': InstitutionRegisterSerializer,
+        'POST': serializers.InstitutionRegisterSerializer,
     }
 
     # Jeżeli danego zapytania nie ma na liście serializer_classes to wykorzystany będzie domyślny
-    default_serializer_class = InstitutionRegisterSerializer
+    default_serializer_class = serializers.InstitutionRegisterSerializer
 
     # Metoda wybiera z jakiego serializera będziemy korzystać
     def get_serializer_class(self):
@@ -211,11 +322,11 @@ class InstitutionNameExistViewSet(viewsets.ModelViewSet):
 
     # Lista serializerii dla danech typów zapytań
     serializer_classes = {
-        'GET': InstitutionNameExistSerializer,
+        'GET': serializers.InstitutionNameExistSerializer,
     }
 
     # Jeżeli danego zapytania nie ma na liście serializer_classes to wykorzystany będzie domyślny
-    default_serializer_class = InstitutionNameExistSerializer
+    default_serializer_class = serializers.InstitutionNameExistSerializer
 
     def get_queryset(self):
         institution_user = get_user_model().objects.filter(username=str(self.request.query_params.get('name')))
@@ -226,6 +337,31 @@ class InstitutionNameExistViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         return self.serializer_classes.get(self.action, self.default_serializer_class)
 
+
+#
+# ASSIGNMENT
+#
+
+# Widok tworzenia przypisania do instytucji
+class InstitutionAssignChildViewSet(viewsets.ModelViewSet):
+    queryset = models.Assignment.objects.none()
+
+    authentication_classes = [TokenAuthentication, ]
+    permission_classes = [IsAuthenticated, ]
+
+    # Lista serializerii dla danech typów zapytań
+    serializer_classes = {
+        'POST': serializers.InstitutionAssignChildSerializer,
+    }
+
+    # Jeżeli danego zapytania nie ma na liście serializer_classes to wykorzystany będzie domyślny
+    default_serializer_class = serializers.InstitutionAssignChildSerializer
+    
+    # Metoda wybiera z jakiego serializera będziemy korzystać
+    def get_serializer_class(self):
+        return self.serializer_classes.get(self.action, self.default_serializer_class)
+
+
 #  _____   __  __   ____    _        ___   __   __  _____   _____ 
 # | ____| |  \/  | |  _ \  | |      / _ \  \ \ / / | ____| | ____|
 # |  _|   | |\/| | | |_) | | |     | | | |  \ V /  |  _|   |  _|  
@@ -235,18 +371,18 @@ class InstitutionNameExistViewSet(viewsets.ModelViewSet):
 
 # Widok rejestrowania/tworzenia profilu pracownika
 class EmployeeRegisterViewSet(viewsets.ModelViewSet):
-    queryset = Employee.objects.none()
+    queryset = models.Employee.objects.none()
     
     authentication_classes = [TokenAuthentication, ]
     permission_classes = [IsAuthenticated, ]
 
     # Lista serializerii dla danech typów zapytań
     serializer_classes = {
-        'POST': EmployeeRegisterSerializer,
+        'POST': serializers.EmployeeRegisterSerializer,
     }
 
     # Jeżeli danego zapytania nie ma na liście serializer_classes to wykorzystany będzie domyślny
-    default_serializer_class = EmployeeRegisterSerializer
+    default_serializer_class = serializers.EmployeeRegisterSerializer
     
     # Metoda wybiera z jakiego serializera będziemy korzystać
     def get_serializer_class(self):

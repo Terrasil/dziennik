@@ -2,6 +2,7 @@ import React, { useState, useEffect, useLayoutEffect } from 'react';
 import  { Redirect } from 'react-router-dom'
 import { Navbar, Nav } from 'react-bootstrap';
 import ProfileAvatar from './../img/man.svg'
+import InstitutionAvatar from './../img/university.png'
 
 function Header(props){
 
@@ -41,16 +42,16 @@ function Header(props){
   return (
     <>
       {redirect()}
-      <Navbar collapseOnSelect expand="lg" bg="light" fixed="top" variant="light">
+      <Navbar className="shadow" collapseOnSelect expand="lg" bg="light" fixed="top" variant="light">
         <Navbar.Brand
           href="/"
         >
           <img
             alt="profile-avatar-man"
-            src={ProfileAvatar}
+            src={ props.userdata?.role === 'institution' ? InstitutionAvatar : ProfileAvatar}
             width="30"
             height="30"
-            className="d-inline-block align-top bg-primary rounded-circle mr-2"
+            className={ props.userdata?.role === 'institution' ? "d-inline-block align-top bg-warning rounded-circle mr-2" : "d-inline-block align-top bg-primary rounded-circle mr-2"}
           />
           { props.csrftoken === undefined ? 'Nie zalogowano' : props.userdata ? props.userdata.username : 'Brak nazwy użytkownika' }
         </Navbar.Brand>
@@ -61,12 +62,16 @@ function Header(props){
           <Nav className="text-right">
             { props.userdata?.role === 'user' ? ( <>
               <Nav.Link className="float-right" href="/create/child">Stwórz profil dziecka</Nav.Link>
+              <Nav.Link className="float-right" href="/children">Podopieczni</Nav.Link>
+              <Nav.Link className="float-right" href="/settings">Ustawienia</Nav.Link>
             </>) : null }
             { props.userdata?.role === 'institution' ? ( <>
               <Nav.Link className="float-right" href="/create/activity">Stwórz zajęcia</Nav.Link>
               <Nav.Link className="float-right" href="/create/employee">Stwórz profil pracownika</Nav.Link>
+              <Nav.Link className="float-right" href="/settings">Ustawienia</Nav.Link>
             </>) : null }
             { props.userdata?.role === 'employee' ? ( <>
+              <Nav.Link className="float-right" href="/settings">Ustawienia</Nav.Link>
             </>) : null }
             { props.userdata?.role === 'admin' ? ( <>
               <Nav.Link className="float-right" >Panel administratora</Nav.Link>

@@ -1,9 +1,10 @@
 import React, { SyntheticEvent ,useEffect, useState } from 'react';
 import { Button, Col, Container, Row } from 'react-bootstrap';
 import { useGlobalEvent } from "beautiful-react-hooks";
-import { getMonthName, getWeekDayName } from "../functions"
+import { getMonthName, getWeekDayName } from "../../functions"
+import { propTypes } from 'react-bootstrap/esm/Image';
 
-function ScheduleDay(props) {
+function ScheduleMonth(props) {
 
   const prepareCalendar = () => {
     // Dzisiejsza data
@@ -15,7 +16,6 @@ function ScheduleDay(props) {
     // will fill with sub arrays for each week
     let weeksArray = []
     let week = 1
-
 
     // Ustawiamy datę rozpoczęcia miesiąca
     var calendarStartDay = new Date(monthStart);
@@ -51,27 +51,43 @@ function ScheduleDay(props) {
     let opacity = today.getMonth() == date.date.month ? 1 : 0.5
     return (
       <div style={{opacity:opacity}}>
-        <div onClick={()=>{console.log('test1')}} className="rounded my-1 p-2 bg-primary text-white"><b>Test</b><br/><i>Imie nazwisko</i><br/><i>Imie nazwisko</i><br/><font size='2'>OD</font> 10:00 <font size='2'>DO</font> 12:00</div>
-        <div onClick={()=>{console.log('test2')}} className="rounded my-1 p-2 bg-primary text-white"><b>Test</b><br/><i>Imie nazwisko</i><br/><i>Imie nazwisko</i><br/><font size='2'>OD</font> 10:00 <font size='2'>DO</font> 12:00</div>
-        <div onClick={()=>{console.log('test3')}} className="rounded my-1 p-2 bg-primary text-white"><b>Test</b><br/><i>Imie nazwisko</i><br/><i>Imie nazwisko</i><br/><font size='2'>OD</font> 10:00 <font size='2'>DO</font> 12:00</div>
+        <font className={date.date.day > 4 ? 'text-danger': 'text-dark'}><b>{date.date.number}</b></font>
+        <div onClick={()=>{console.log('test')}}className="rounded my-1 p-1 bg-primary text-white text-overflow">Test</div>
+        <div onClick={()=>{console.log('test')}}className="rounded my-1 p-1 bg-primary text-white text-overflow">Test</div>
+        <div onClick={()=>{console.log('test')}}className="rounded my-1 p-1 bg-primary text-white text-overflow">Test</div>
+        <div onClick={()=>{console.log('test')}}className="rounded my-1 p-1 bg-primary text-white text-overflow">Test</div>
+        <div onClick={()=>{console.log('test')}}className="rounded my-1 p-1 bg-primary text-white text-overflow">Test</div>
+        <div onClick={()=>{console.log('test')}}className="rounded my-1 p-1 bg-primary text-white text-overflow">Test</div>
       </div>
     )
   } 
-  const getWeekDayNameAndNumber = (dayNumber) => {
-    const daysNames = ['Poniedziałek','Wtorek','Środa','Czwartek','Piątek','Sobota','Niedziela']
-    const daysNamesShort = ['Pn','Wt','Śr','Cz','Pt','Sb','Nd']
-    return <>{monthdays[((0 | new Date().getDate() / 7)+1)][dayNumber].number} <font size="2">{(windowsize.width >= 872 ? daysNames[dayNumber] : daysNamesShort[dayNumber])}</font></>
-  }
 
   const ScheduleMenu = () => {
     return(
-      <div id='scheduleMenu' className="position-fixed w-100" style={{zIndex:'1001'}}>
+      <div className="position-fixed w-100 shadow" style={{zIndex:'999'}}>
         <div className="bg-primary text-white text-center row" style={{height:'3rem'}}>
-          <span className="col my-auto">{getMonthName()} {new Date().getFullYear()} , {new Date().getDate()}</span>
+          <span className="col my-auto">{ getMonthName() } { new Date().getFullYear() }</span>
           <Button onClick={()=>props.changeDisplayMode('day')} style={{marginRight:'1rem'}}>Dzisiaj</Button>
           <Button onClick={()=>props.changeDisplayMode('week')} style={{marginRight:'1rem'}}>Tydzień</Button>
           <Button onClick={()=>props.changeDisplayMode('month')} style={{marginRight:'1rem'}}>Miesiąc</Button>
         </div>
+        <Container style={{
+          width:windowsize.width > 320 ? 'calc(100% - 0.5rem)' : '100%',
+          marginLeft:'-0.25rem',
+          display: 'grid',
+          overflow:'hidden',
+          padding:'0',
+          gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr 1fr 1fr',
+          gridTemplateRows: '3rem'
+        }} className="shadow" fluid>
+          <div className="bg-dark w-100 mx-auto text-white text-center row overflow-hidden"><div className="col my-auto">{getWeekDayName(windowsize.width, 0)}</div></div>
+          <div className="bg-dark w-100 mx-auto text-white text-center row overflow-hidden"><div className="col my-auto">{getWeekDayName(windowsize.width, 1)}</div></div>
+          <div className="bg-dark w-100 mx-auto text-white text-center row overflow-hidden"><div className="col my-auto">{getWeekDayName(windowsize.width, 2)}</div></div>
+          <div className="bg-dark w-100 mx-auto text-white text-center row overflow-hidden"><div className="col my-auto">{getWeekDayName(windowsize.width, 3)}</div></div>
+          <div className="bg-dark w-100 mx-auto text-white text-center row overflow-hidden"><div className="col my-auto">{getWeekDayName(windowsize.width, 4)}</div></div>
+          <div className="bg-danger w-100 mx-auto text-white text-center row overflow-hidden"><div className="col my-auto">{getWeekDayName(windowsize.width, 5)}</div></div>
+          <div className="bg-danger w-100 mx-auto text-white text-center row overflow-hidden"><div className="col my-auto">{getWeekDayName(windowsize.width, 6)}</div></div>
+        </Container>
       </div>
     )
   }
@@ -95,19 +111,30 @@ function ScheduleDay(props) {
   return (
     <>
       <ScheduleMenu/>
-      <div className="bg-primary text-white text-center row" style={{height:'3rem'}}></div>
+      <div className="bg-primary text-white text-center row" style={{height:'6rem'}}></div>
       <Container style={{
-        minHeight:'calc(100% - 3rem + 1px)',
+        minHeight:'calc(100% - 6rem + 1px)',
         minWidth:'100%',
         display: 'grid',
         padding:0,
-        gridTemplateColumns: '1fr',
-        gridTemplateRows: '1fr'
+        gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr 1fr 1fr',
+        gridTemplateRows: '1fr 1fr 1fr 1fr 1fr 1fr '
       }} fluid>
-        <div style={{border:'1px solid #eee',padding:'0.25rem'}}><Day date={new Date().getDate()}/></div>
+        {
+          monthdays?.map((week) => {
+            return week.map((day, index) => {
+              // Zaznaczenie dzisiejszego dnia
+              let today = new Date()
+              let dateToCheck = new Date(today.getFullYear(), day.month, day.number, today.getHours(), today.getMinutes(), today.getSeconds(), today.getMilliseconds())
+              let backgroundToSet = today.getTime() === dateToCheck.getTime() ? 'lightblue' : 'transparent'
+              // Rysowanie dni
+              return(<div style={{border:'1px solid #eee',padding:'0.25rem', backgroundColor:backgroundToSet}} key={index}><Day date={day}/></div>)
+            })
+          })
+        } 
       </Container>
     </>
   );
 }
 
-export default ScheduleDay;
+export default ScheduleMonth;

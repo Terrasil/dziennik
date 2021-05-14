@@ -6,9 +6,10 @@ import Image from 'react-bootstrap/Image'
 import Logo from '../../img/logo.png'
 import { Alert, InputGroup, Modal } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faUser, faUniversity } from '@fortawesome/free-solid-svg-icons'
+import { faChevronLeft} from '@fortawesome/free-solid-svg-icons'
+import Header from '../Header';
 
-function ChangeName(props){
+function SettingsChangeInstitutionData(props){
 
   const [ form, setForm ] = useState({})
   const [ errors, setErrors ] = useState({})
@@ -145,8 +146,11 @@ function ChangeName(props){
   }
 
   const redirect = () => {
-    if (!!props.csrftoken) {
-      return <Redirect to='/' />
+    if (!!props.userdata) {
+      console.log(props.userdata?.role)
+      if(props.userdata?.role !== 'institution'){
+        return <Redirect to='/settings' />
+      }
     }
   }
 
@@ -186,18 +190,15 @@ function ChangeName(props){
     <>
       { redirect() }
       { modal() }
-      <div className="container h-100">
+      <Header csrftoken={props.csrftoken} userdata={ props.userdata}/>
+      <div className="container h-100" style={{top: "3.5rem", minHeight: "calc(100%-3.5rem)"}}>
         <div className="row h-100 justify-content-center align-items-center">
           <Form className="col-md-6">
-            <Form.Group className="text-center pb-4 container-fluid">
-              <div className="row align-items-start">
-                <div className="col" style={{paddingTop:'1rem', paddingBottom:'1rem',borderBottom:'0.5rem solid transparent'}}>
-                  <a href="../register/person" id="signup"><FontAwesomeIcon style={{fontSize: 'min(25vw, 900%)'}} color="silver" icon={faUser} /></a>
-                </div>
-                <div className="col" style={{paddingTop:'1rem', paddingBottom:'1rem',borderBottom:'0.5rem solid dodgerblue'}}>
-                  <FontAwesomeIcon style={{fontSize: 'min(25vw, 900%)'}} color="dodgerblue" icon={faUniversity} />
-                </div>
-              </div>
+            <Form.Group>
+              <Button className='w-100 text-left' onClick={()=>{window.location.href = '/settings'}}variant='light'><FontAwesomeIcon className='mr-1' icon={faChevronLeft} /> Wróć do ustawień</Button>
+              <hr/>  
+              <h5>Zmiana danych instytucji</h5>
+              <hr class='horizontal-rule'/>  
             </Form.Group>
             <Form.Group>
               <Form.Label>Podaj nazwę</Form.Label>
@@ -205,6 +206,7 @@ function ChangeName(props){
                 <Form.Control 
                   type='text' name="username"
                   onChange={ e => setField('username', e.target.value) }
+                  value={props.userdata?.username}
                   isInvalid={ !!errors.username }
                 />
                 <Form.Control.Feedback type='invalid'>{ errors.username }</Form.Control.Feedback>
@@ -215,6 +217,7 @@ function ChangeName(props){
               <Form.Control as="select" custom 
                   type='select' name="category"
                   onChange={ e => setField('category', e.target.value) }
+                  value={props.userdata?.categoty}
                   isInvalid={ !!errors.category }
                 >
                 <option disabled selected hidden>Wybierz z listy...</option>
@@ -225,13 +228,13 @@ function ChangeName(props){
               </Form.Control>
               <Form.Control.Feedback type='invalid'>{ errors.category }</Form.Control.Feedback>
             </Form.Group>
-            
             <Form.Group>
               <Form.Label>Podaj profil</Form.Label>
               <InputGroup className="mb-3">
                 <Form.Control 
                   type='text' name="profile"
                   onChange={ e => setField('profile', e.target.value) }
+                  value={props.userdata?.profile}
                   isInvalid={ !!errors.profile }
                 />
                 <Form.Control.Feedback style={{color:'gray', display:'block'}}>Np. języka angielski, piłka nożna, tenis...</Form.Control.Feedback>
@@ -251,4 +254,4 @@ function ChangeName(props){
   )
 }
 
-export default ChangeName;
+export default SettingsChangeInstitutionData;

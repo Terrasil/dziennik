@@ -4,7 +4,7 @@ from email.mime.image import MIMEImage
 from django.template.loader import render_to_string
 from rest_framework.authtoken.models import Token
 from rest_framework import serializers
-from .models import Employee, UserActivate, Institution, Activity, Child
+from . import models
 from .settings import STATIC_ROOT
 
 import random
@@ -43,7 +43,7 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         # Tworzenie nowego użytkownika
         user = get_user_model().objects.create_user(**validated_data)
         # Tworzenie aktywacji uprzednio stworzonego użytkownika
-        UserActivate.objects.create(user_id=user,activate_code=generated_activate_key)
+        models.UserActivate.objects.create(user_id=user,activate_code=generated_activate_key)
         # Stworzenie tokenu autoryzujacego dla uzytkownika
         Token.objects.create(user=user)
 
@@ -76,7 +76,7 @@ class UsersGetActivities(serializers.ModelSerializer):
     children = serializers.CharField()
     employee = serializers.CharField()
     class Meta:
-        model = Activity
+        model = models.Activity
         # Dane jakie potrzebujemy pobrać o aktywności
         fields = ('name', 'date', 'start_time', 'end_time', 'periodicity', 'finished', 'remind_employee', 'children', 'employee', )
 
@@ -86,7 +86,7 @@ class UsersGetActivities(serializers.ModelSerializer):
 
 class UserCreateChildSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Child
+        model = models.Child
         # Dane jakie potrzebujemy do zarejestrowania dziecka
         fields = ['first_name', 'last_name', 'age', 'parent_id']
         extra_kwargs = {
@@ -99,9 +99,54 @@ class UserCreateChildSerializer(serializers.ModelSerializer):
     # Rejestrowanie dziecka
     def create(self, validated_data):
 
-        child = Child.objects.create(**validated_data)
+        child = models.Child.objects.create(**validated_data)
 
         return child
+
+# Zwraca listę dzieci
+class UserChildrenSerializer(serializers.ModelSerializer):
+    assigments = serializers.CharField() # JSON z listą instytucji do jakich należy dziecko
+    class Meta:
+        model = models.Child
+        # Dane jakie potrzebujemy pobrać o dziecki
+        fields = ['id', 'first_name', 'last_name', 'age' , 'assigments']
+
+
+# Usuwa dziecko
+class UserChildDeleteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Child
+        fields = ['id', 'first_name', 'last_name', 'age']
+        extra_kwargs = {
+            'first_name': {'write_only': True, 'required': False},
+            'last_name': {'write_only': True, 'required': False},
+            'age': {'write_only': True, 'required': False},
+            'parent_id': {'write_only': True, 'required': False}
+        }
+
+# Zmienia dane dziecka
+class UserChildUpdateSerializer(serializers.ModelSerializer):
+    child_id = serializers.IntegerField()
+    class Meta:
+        model = models.Child
+        fields = ['id','first_name', 'last_name', 'age', 'child_id']
+        extra_kwargs = {
+            'first_name': {'write_only': True, 'required': True},
+            'last_name': {'write_only': True, 'required': True},
+            'age': {'write_only': True, 'required': True}
+        }
+
+    # Metoda create wykorzystywana do aktualizacji porfilu dziecka
+    def create(self, validated_data):
+        print(validated_data)
+        child = models.Child.objects.get(pk=int(validated_data['child_id']))
+        print(child)
+        child.first_name = validated_data['first_name']
+        child.last_name = validated_data['last_name']
+        child.age = int(validated_data['age'])
+        child.save()
+
+        return validated_data
 
 #  ___   _   _   ____    _____   ___   _____   _   _   _____   ___    ___    _   _ 
 # |_ _| | \ | | / ___|  |_   _| |_ _| |_   _| | | | | |_   _| |_ _|  / _ \  | \ | |
@@ -109,6 +154,14 @@ class UserCreateChildSerializer(serializers.ModelSerializer):
 #  | |  | |\  |  ___) |   | |    | |    | |   | |_| |   | |    | |  | |_| | | |\  |
 # |___| |_| \_| |____/    |_|   |___|   |_|    \___/    |_|   |___|  \___/  |_| \_|
 #     
+
+
+class InstitutionsSerializer(serializers.ModelSerializer):
+    name = serializers.CharField()
+    class Meta:
+        model = models.Institution
+        # Dane jakie potrzebujemy pobrać o uzytkowniku
+        fields = ['id', 'name', 'category', 'profile']
 
 class InstitutionRegisterSerializer(serializers.ModelSerializer):
     category = serializers.CharField()
@@ -148,12 +201,12 @@ class InstitutionRegisterSerializer(serializers.ModelSerializer):
             phone = validated_data['phone']
         )
         # Tworzenie aktywacji uprzednio stworzonego użytkownika
-        UserActivate.objects.create(user_id=user,activate_code=generated_activate_key)
+        models.UserActivate.objects.create(user_id=user,activate_code=generated_activate_key)
         # Stworzenie tokenu autoryzujacego dla uzytkownika
         Token.objects.create(user=user)
 
         # Tworzenie instytucji
-        Institution.objects.create(
+        models.Institution.objects.create(
             user_id=user,
             category=validated_data['category'],
             profile=validated_data['profile']
@@ -178,6 +231,31 @@ class InstitutionNameExistSerializer(serializers.ModelSerializer):
         model = get_user_model()
         # Dane jakie potrzebujemy pobrać o uzytkowniku
         fields = ['username']
+
+#
+# ASSIGNMENTS
+#
+
+class InstitutionAssignChildSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Assignment
+        # Dane jakie potrzebujemy do stworzenia przypisania
+        fields = ('child_id', 'institution_id', 'status')
+        extra_kwargs = {
+            'child_id': {'write_only': True, 'required': True},
+            'institution_id': {'write_only': True, 'required': True},
+            'status': {'write_only': True, 'required': False} # Domyślnie tworzony jest jako 'Pending' - więc nie podamy tu nic
+        }
+
+    # Tworzenie przypisania
+    def create(self, validated_data):
+        print(validated_data)
+        if(not models.Assignment.objects.filter(child_id=validated_data['child_id'],institution_id=validated_data['institution_id']).exists()):
+            assignment = models.Assignment.objects.create(**validated_data)
+        
+
+        return assignment
+
 
 #  _____   __  __   ____    _        ___   __   __  _____   _____ 
 # | ____| |  \/  | |  _ \  | |      / _ \  \ \ / / | ____| | ____|
@@ -228,15 +306,15 @@ class EmployeeRegisterSerializer(serializers.ModelSerializer):
             phone = validated_data['phone']
         )
         # Tworzenie aktywacji uprzednio stworzonego użytkownika
-        UserActivate.objects.create(user_id=user,activate_code=generated_activate_key)
+        models.UserActivate.objects.create(user_id=user,activate_code=generated_activate_key)
         # Stworzenie tokenu autoryzujacego dla uzytkownika
         Token.objects.create(user=user)
 
         # Wyszukanie instytucji
-        institution = Institution.objects.get(user_id=int(validated_data['institution_id']))
+        institution = models.Institution.objects.get(user_id=int(validated_data['institution_id']))
 
         # Tworzenie profilu pracownika
-        Employee.objects.create(
+        models.Employee.objects.create(
             institution_id=institution,
             user_id = user,
             specialization = validated_data['specialization']

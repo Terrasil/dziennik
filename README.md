@@ -29,9 +29,9 @@ Celem projektu jest łatwiejsza organizacja zajęć pozalekcyjnych - sprawne prz
   - [ ] Ustawienie przypomnienia
   - [ ] Wysyłanie wiadomości do prowadzącego
 - [x] Tworzenie profilu dziecka
-  - [ ] Zmiana danych dziecka
-  - [ ] Przypisanie dziecka do instytucji
-  - [ ] Usuwanie profilu dziecka
+  - [x] Zmiana danych dziecka
+  - [x] Przypisanie dziecka do instytucji
+  - [x] Usuwanie profilu dziecka
 - [ ] Ustawienia
   - [ ] Zmiana emaila
   - [ ] Zmiana hasła

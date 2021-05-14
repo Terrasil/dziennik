@@ -154,18 +154,26 @@ function CreateChild(props) {
     )
   }
   
-  // Logo nad formularzem
-  //<Form.Group className="text-center pb-4 container-fluid">
-  //  <Image src={Logo} style={{width:'50%', padding:'1rem'}}/>
-  //</Form.Group>
+  const redirect = () => {
+    if (!!props.userdata) {
+      if(props.userdata?.role !== 'user'){
+        return <Redirect to='/settings' />
+      }
+    }
+  }
 
   return (
     <>
+      { redirect() }
       { modal() }
       <Header csrftoken={props.csrftoken} userdata={ props.userdata}/>
       <div className="container h-100" style={{top: "3.5rem", minHeight: "calc(100%-3.5rem)"}}>
         <div className="row h-100 justify-content-center align-items-center">
-        <Form className="col-md-6">
+          <Form className="col-md-6">
+            <Form.Group>
+              <h5>TWORZENIE PROFILU DZIECKA</h5>
+              <hr class='horizontal-rule'/>  
+            </Form.Group>
             <Form.Group>
               <Form.Label>Podaj imię dziecka</Form.Label>
               <InputGroup className="mb-3">

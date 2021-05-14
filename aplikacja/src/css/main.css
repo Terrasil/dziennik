@@ -16,6 +16,11 @@ html, body, main{
     -webkit-line-clamp: 1;
     -webkit-box-orient: horizontal;
 }
+.horizontal-rule{
+    border: 1px solid #ddd;
+    border-radius: 1px;
+    width: 100%;
+}
 
 /* SCROLLBAR */
 ::-webkit-scrollbar{

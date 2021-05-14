@@ -18,21 +18,26 @@ from django.urls import path, include
 from rest_framework import routers
 from rest_framework.authtoken.views import obtain_auth_token
 
-from .views import UserRegisterViewSet, UsersViewSet, UsersActivatedViewSet, UsersActivationAccountViewSet, InstitutionRegisterViewSet, InstitutionNameExistViewSet, UsersGetActivitiesViewSet, UserCreateChildViewSet, EmployeeRegisterViewSet 
+from . import views
 
 router = routers.DefaultRouter()
 # User
-router.register('users', UsersViewSet)
-router.register('users-register', UserRegisterViewSet)
-router.register('users-activated', UsersActivatedViewSet)
-router.register('users-activation', UsersActivationAccountViewSet)
-router.register('users-activities', UsersGetActivitiesViewSet)
-router.register('users-create-child', UserCreateChildViewSet)
+router.register('users', views.UsersViewSet)
+router.register('users-register', views.UserRegisterViewSet)
+router.register('users-activated', views.UsersActivatedViewSet)
+router.register('users-activation', views.UsersActivationAccountViewSet)
+router.register('users-activities', views.UsersGetActivitiesViewSet)
+router.register('users-create-child', views.UserCreateChildViewSet)
+router.register('users-delete-child', views.UserDeleteChildViewSet)
+router.register('users-update-child', views.UserUpdateChildViewSet)
+router.register('users-children', views.UserChildrenViewSet)
 # Institution
-router.register('institutions-register', InstitutionRegisterViewSet)
-router.register('institutions-exist', InstitutionNameExistViewSet)
+router.register('institutions', views.InstitutionsViewSet)
+router.register('institutions-register', views.InstitutionRegisterViewSet)
+router.register('institutions-exist', views.InstitutionNameExistViewSet)
+router.register('institutions-assign-child', views.InstitutionAssignChildViewSet)
 # Employee
-router.register('employee-register', EmployeeRegisterViewSet)
+router.register('employee-register', views.EmployeeRegisterViewSet)
 
 urlpatterns = [  
     path('panel/admin/', include('smuggler.urls')),

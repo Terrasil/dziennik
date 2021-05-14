@@ -1,7 +1,7 @@
 import React, { SyntheticEvent ,useEffect, useState } from 'react';
 import { Button, Col, Container, Row } from 'react-bootstrap';
 import { useGlobalEvent } from "beautiful-react-hooks";
-import { getMonthName, getWeekDayName } from "../functions"
+import { getMonthName, getWeekDayName,getWeekNumber } from "../../functions"
 
 function ScheduleWeek(props) {
 
@@ -54,18 +54,27 @@ function ScheduleWeek(props) {
         <div onClick={()=>{console.log('test1')}} className="rounded my-1 p-2 bg-primary text-white"><b>Test</b><br/><i>Imie nazwisko</i><br/><i>Imie nazwisko</i><br/><font size='2'>OD</font> 10:00 <font size='2'>DO</font> 12:00</div>
         <div onClick={()=>{console.log('test2')}} className="rounded my-1 p-2 bg-primary text-white"><b>Test</b><br/><i>Imie nazwisko</i><br/><i>Imie nazwisko</i><br/><font size='2'>OD</font> 10:00 <font size='2'>DO</font> 12:00</div>
         <div onClick={()=>{console.log('test3')}} className="rounded my-1 p-2 bg-primary text-white"><b>Test</b><br/><i>Imie nazwisko</i><br/><i>Imie nazwisko</i><br/><font size='2'>OD</font> 10:00 <font size='2'>DO</font> 12:00</div>
+        <div onClick={()=>{console.log('test3')}} className="rounded my-1 p-2 bg-primary text-white"><b>Test</b><br/><i>Imie nazwisko</i><br/><i>Imie nazwisko</i><br/><font size='2'>OD</font> 10:00 <font size='2'>DO</font> 12:00</div>
+        <div onClick={()=>{console.log('test3')}} className="rounded my-1 p-2 bg-primary text-white"><b>Test</b><br/><i>Imie nazwisko</i><br/><i>Imie nazwisko</i><br/><font size='2'>OD</font> 10:00 <font size='2'>DO</font> 12:00</div>
+        <div onClick={()=>{console.log('test3')}} className="rounded my-1 p-2 bg-primary text-white"><b>Test</b><br/><i>Imie nazwisko</i><br/><i>Imie nazwisko</i><br/><font size='2'>OD</font> 10:00 <font size='2'>DO</font> 12:00</div>
+        <div onClick={()=>{console.log('test3')}} className="rounded my-1 p-2 bg-primary text-white"><b>Test</b><br/><i>Imie nazwisko</i><br/><i>Imie nazwisko</i><br/><font size='2'>OD</font> 10:00 <font size='2'>DO</font> 12:00</div>
+        <div onClick={()=>{console.log('test3')}} className="rounded my-1 p-2 bg-primary text-white"><b>Test</b><br/><i>Imie nazwisko</i><br/><i>Imie nazwisko</i><br/><font size='2'>OD</font> 10:00 <font size='2'>DO</font> 12:00</div>
+        <div onClick={()=>{console.log('test3')}} className="rounded my-1 p-2 bg-primary text-white"><b>Test</b><br/><i>Imie nazwisko</i><br/><i>Imie nazwisko</i><br/><font size='2'>OD</font> 10:00 <font size='2'>DO</font> 12:00</div>
+        <div onClick={()=>{console.log('test3')}} className="rounded my-1 p-2 bg-primary text-white"><b>Test</b><br/><i>Imie nazwisko</i><br/><i>Imie nazwisko</i><br/><font size='2'>OD</font> 10:00 <font size='2'>DO</font> 12:00</div>
+        <div onClick={()=>{console.log('test3')}} className="rounded my-1 p-2 bg-primary text-white"><b>Test</b><br/><i>Imie nazwisko</i><br/><i>Imie nazwisko</i><br/><font size='2'>OD</font> 10:00 <font size='2'>DO</font> 12:00</div>
       </div>
     )
   } 
   const getWeekDayNameAndNumber = (dayNumber) =>{
     const daysNames = ['Poniedziałek','Wtorek','Środa','Czwartek','Piątek','Sobota','Niedziela']
     const daysNamesShort = ['Pn','Wt','Śr','Cz','Pt','Sb','Nd']
-    return <>{monthdays[((0 | new Date().getDate() / 7)+1)][dayNumber].number} <font size="2">{(windowsize.width >= 872 ? daysNames[dayNumber] : daysNamesShort[dayNumber])}</font></>
+    console.log()
+    return <>{monthdays[getWeekNumber()][dayNumber].number} <font size="2">{(windowsize.width >= 872 ? daysNames[dayNumber] : daysNamesShort[dayNumber])}</font></>
   }
 
   const ScheduleMenu = () =>{
     return(
-      <div id='scheduleMenu' className="position-fixed w-100" style={{zIndex:'1001'}}>
+      <div id='scheduleMenu' className="position-fixed w-100 shadow" style={{zIndex:'1001'}}>
         <div className="bg-primary text-white text-center row" style={{height:'3rem'}}>
           <span className="col my-auto">{ getMonthName() } { new Date().getFullYear() }</span>
           <Button onClick={()=>props.changeDisplayMode('day')} style={{marginRight:'1rem'}}>Dzisiaj</Button>
@@ -81,7 +90,7 @@ function ScheduleWeek(props) {
           padding:'0',
           gridTemplateColumns: '1fr 1fr 1fr 1fr 1fr 1fr 1fr',
           gridTemplateRows: '3rem'
-        }} fluid>
+        }} className="shadow" fluid>
           <div className="bg-dark w-100 mx-auto text-white text-center row overflow-hidden"><div className="col my-auto">{getWeekDayNameAndNumber(0)}</div></div>
           <div className="bg-dark w-100 mx-auto text-white text-center row overflow-hidden"><div className="col my-auto">{getWeekDayNameAndNumber(1)}</div></div>
           <div className="bg-dark w-100 mx-auto text-white text-center row overflow-hidden"><div className="col my-auto">{getWeekDayNameAndNumber(2)}</div></div>
@@ -123,7 +132,7 @@ function ScheduleWeek(props) {
         gridTemplateRows: '1fr'
       }} fluid>
         {
-          monthdays[((0 | new Date().getDate() / 7)+1)]?.map((day, index) => {
+          monthdays[getWeekNumber()]?.map((day, index) => {
             // Zaznaczenie dzisiejszego dnia
             let today = new Date()
             let dateToCheck = new Date(today.getFullYear(), day.month, day.number, today.getHours(), today.getMinutes(), today.getSeconds(), today.getMilliseconds())

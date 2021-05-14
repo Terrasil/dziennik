@@ -10,6 +10,17 @@ const getCookie = (name) => {
   return result[name] ? result[name] : ''
 }
 
+// Zwraca numer tygodnia danego miesiąca
+function getWeekNumber() {
+  var _date = new Date()
+  var monthStartDate = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+  monthStartDate = new Date(monthStartDate);
+  var day = monthStartDate.getDay();
+  date = new Date(_date);
+  var date = date.getDate();
+  return Math.ceil((date+ day-1)/ 7)-1;
+}
+
 // Podanie nazwy miesiąca
 function getMonthName(){
   const monthNumber = new Date().getMonth()
@@ -33,5 +44,6 @@ export {
     getCookie,
     getMonthName,
     getWeekDayName,
-    convertRemToPixels
+    convertRemToPixels,
+    getWeekNumber
 }

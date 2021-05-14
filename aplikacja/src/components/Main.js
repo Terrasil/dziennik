@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import Header from './Header';
 import  { Redirect } from 'react-router-dom'
-import ScheduleMonth from './ScheduleMonth';
-import ScheduleWeek from './ScheduleWeek';
-import ScheduleDay from './ScheduleDay';
+import ScheduleMonth from './Schedule/ScheduleMonth';
+import ScheduleWeek from './Schedule/ScheduleWeek';
+import ScheduleDay from './Schedule/ScheduleDay';
 
 function Main(props){
   

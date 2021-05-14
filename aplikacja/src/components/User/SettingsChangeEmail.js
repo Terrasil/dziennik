@@ -6,9 +6,11 @@ import Image from 'react-bootstrap/Image'
 import Logo from '../../img/logo.png'
 import { Alert, InputGroup, Modal } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faUser, faUniversity } from '@fortawesome/free-solid-svg-icons'
+import { faChevronLeft} from '@fortawesome/free-solid-svg-icons'
 
-function RegisterPerson(props){
+import Header from './../Header';
+
+function SettingsChangeEmail(props){
 
   const [ form, setForm ] = useState({})
   const [ errors, setErrors ] = useState({})
@@ -139,27 +141,24 @@ function RegisterPerson(props){
 
   return (
     <>
-      { redirect() }
       { modal() }
-      <div className="container h-100">
+      <Header csrftoken={props.csrftoken} userdata={ props.userdata}/>
+      <div className="container h-100" style={{top: "3.5rem", minHeight: "calc(100%-3.5rem)"}}>
         <div className="row h-100 justify-content-center align-items-center">
           <Form className="col-md-6">
-            <Form.Group className="text-center pb-4 container-fluid">
-              <div className="row align-items-start">
-                <div className="col" style={{paddingTop:'1rem', paddingBottom:'1rem',borderBottom:'0.5rem solid dodgerblue'}}>
-                  <FontAwesomeIcon style={{fontSize: 'min(25vw, 900%)'}} color="dodgerblue" icon={faUser} />
-                </div>
-                <div className="col" style={{paddingTop:'1rem', paddingBottom:'1rem',borderBottom:'0.5rem solid transparent'}}>
-                  <a href="../register/institution" id="signup"><FontAwesomeIcon style={{fontSize: 'min(25vw, 900%)'}} color="silver" icon={faUniversity} /></a>
-                </div>
-              </div>
+            <Form.Group>
+              <Button className='w-100 text-left' onClick={()=>{window.location.href = '/settings'}}variant='light'><FontAwesomeIcon className='mr-1' icon={faChevronLeft} /> Wróć do ustawień</Button>
+              <hr/>  
+              <h5>Zmiana adresu email</h5>
+              <hr class='horizontal-rule'/>  
             </Form.Group>
             <Form.Group>
-              <Form.Label>Adres Email</Form.Label>
+              <Form.Label>Adres email</Form.Label>
               <InputGroup className="mb-3">
                 <Form.Control 
                   type='email' name="email"
                   onChange={ e => setField('email', e.target.value) }
+                  value={props.userdata?.email}
                   isInvalid={ !!errors.email }
                 />
                 <Form.Control.Feedback type='invalid'>{ errors.email }</Form.Control.Feedback>
@@ -178,4 +177,4 @@ function RegisterPerson(props){
   )
 }
 
-export default RegisterPerson;
+export default SettingsChangeEmail;
