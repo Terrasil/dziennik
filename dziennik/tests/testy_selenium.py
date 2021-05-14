@@ -26,7 +26,8 @@ class TestProject(StaticLiveServerTestCase):
     def setUp(self):
         self.browser = webdriver.Chrome(ChromeDriverManager().install())
         self.wait = WebDriverWait(self.browser, 10)
-
+    """ Testy Logowania Uzytkownik"""
+    """ T1 Logowanie poprawne"""
     def test_T1(self):
         self.browser.get('http://localhost:3000/login')
         login = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[2]/input')
@@ -81,7 +82,7 @@ class TestProject(StaticLiveServerTestCase):
         self.browser.find_element_by_tag_name('button').click()   
         self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'modal-content')))
         self.browser.close()
-
+    """ T5 Rejestracja użytkownika niepoprawne - niezgadzające się hasła"""
     def test_T5(self):
         self.browser.get('http://localhost:3000/register/person')
         name = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[2]/div/input')
@@ -100,7 +101,7 @@ class TestProject(StaticLiveServerTestCase):
         time.sleep(2)
         self.wait.until(EC.text_to_be_present_in_element((By.XPATH, "/html/body/main/div/div/form/div[6]/div/div"), "Hasła się nie zgadzają!"))
         self.browser.close()
-
+    """ T6 Rejestracja użytkownika niepoprawne - brak podania hasła"""
     def test_T6(self):
         self.browser.get('http://localhost:3000/register/person')
         name = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[2]/div/input')
@@ -119,7 +120,7 @@ class TestProject(StaticLiveServerTestCase):
         time.sleep(2)
         self.wait.until(EC.text_to_be_present_in_element((By.XPATH, "/html/body/main/div/div/form/div[5]/div/div[2]"), "Podaj hasło!"))
         self.browser.close()
-
+    """ T13 Rejestracja użytkownika niepoprawne - brak imienia"""
     def test_T13(self):
         self.browser.get('http://localhost:3000/register/person')
         name = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[2]/div/input')
@@ -138,7 +139,7 @@ class TestProject(StaticLiveServerTestCase):
         time.sleep(2)
         self.wait.until(EC.text_to_be_present_in_element((By.XPATH, "/html/body/main/div/div/form/div[2]/div/div"), "Podaj imię!"))
         self.browser.close()
-    
+    """ T14 Rejestracja użytkownika niepoprawne - błędne imię"""
     def test_T14(self):
         self.browser.get('http://localhost:3000/register/person')
         name = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[2]/div/input')
@@ -157,7 +158,7 @@ class TestProject(StaticLiveServerTestCase):
         time.sleep(2)
         self.wait.until(EC.text_to_be_present_in_element((By.XPATH, "/html/body/main/div/div/form/div[2]/div/div"), "Podano błędne imie! Powinno zaczynać się z wielkiej litery i nie zawierac cyfr."))
         self.browser.close()
-
+    """ T15 Rejestracja użytkownika niepoprawne - brak nazwiska"""
     def test_T15(self):
         self.browser.get('http://localhost:3000/register/person')
         name = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[2]/div/input')
@@ -176,7 +177,7 @@ class TestProject(StaticLiveServerTestCase):
         time.sleep(2)
         self.wait.until(EC.text_to_be_present_in_element((By.XPATH, "/html/body/main/div/div/form/div[3]/div/div"), "Podaj nazwisko!"))
         self.browser.close()
-
+    """ T16 Rejestracja użytkownika niepoprawne - błędne nazwisko"""
     def test_T16(self):
         self.browser.get('http://localhost:3000/register/person')
         name = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[2]/div/input')
@@ -195,7 +196,7 @@ class TestProject(StaticLiveServerTestCase):
         time.sleep(2)
         self.wait.until(EC.text_to_be_present_in_element((By.XPATH, "/html/body/main/div/div/form/div[3]/div/div"), "Podaj nazwisko!"))
         self.browser.close()
-
+    """ T17 Rejestracja użytkownika niepoprawne - brak maila"""
     def test_T17(self):
         self.browser.get('http://localhost:3000/register/person')
         name = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[2]/div/input')
@@ -214,7 +215,7 @@ class TestProject(StaticLiveServerTestCase):
         time.sleep(2)
         self.wait.until(EC.text_to_be_present_in_element((By.XPATH, "/html/body/main/div/div/form/div[4]/div/div"), "Podaj adres email!"))
         self.browser.close()
-
+    """ T18 Rejestracja użytkownika niepoprawne - brak maila"""
     def test_T18(self):
         self.browser.get('http://localhost:3000/register/person')
         name = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[2]/div/input')
@@ -233,7 +234,7 @@ class TestProject(StaticLiveServerTestCase):
         time.sleep(2)
         self.wait.until(EC.text_to_be_present_in_element((By.XPATH, "/html/body/main/div/div/form/div[4]/div/div"), "Podano zły format! 'example@mail.com'"))
         self.browser.close()
-
+    """ T19 Rejestracja użytkownika niepoprawne - błędny mail bez ."""
     def test_T19(self):
         self.browser.get('http://localhost:3000/register/person')
         name = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[2]/div/input')
@@ -252,7 +253,7 @@ class TestProject(StaticLiveServerTestCase):
         time.sleep(2)
         self.wait.until(EC.text_to_be_present_in_element((By.XPATH, "/html/body/main/div/div/form/div[4]/div/div"), "Podano zły format! 'example@mail.com'"))
         self.browser.close()
-
+    """ T20 Rejestracja użytkownika niepoprawne - błędny mail bez “@….”"""
     def test_T20(self):
         self.browser.get('http://localhost:3000/register/person')
         name = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[2]/div/input')
@@ -270,7 +271,7 @@ class TestProject(StaticLiveServerTestCase):
         self.browser.find_element_by_tag_name('button').click()
         time.sleep(2)
         self.wait.until(EC.text_to_be_present_in_element((By.XPATH, "/html/body/main/div/div/form/div[4]/div/div"), "Podano zły format! 'example@mail.com'"))
-
+    """ T21 Rejestracja użytkownika niepoprawne - za krótkie hasło"""
     def test_T21(self):
         self.browser.get('http://localhost:3000/register/person')
         name = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[2]/div/input')
@@ -288,7 +289,7 @@ class TestProject(StaticLiveServerTestCase):
         self.browser.find_element_by_tag_name('button').click()
         time.sleep(2)
         self.wait.until(EC.text_to_be_present_in_element((By.XPATH, "/html/body/main/div/div/form/div[5]/div/div[2]"), "Hasło musi zkładać się z 8-u znaków!"))
-
+    """ T22 Rejestracja użytkownika niepoprawne - hasło bez cyfry"""
     def test_T22(self):
         self.browser.get('http://localhost:3000/register/person')
         name = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[2]/div/input')
@@ -306,7 +307,7 @@ class TestProject(StaticLiveServerTestCase):
         self.browser.find_element_by_tag_name('button').click()
         time.sleep(2)
         self.wait.until(EC.text_to_be_present_in_element((By.XPATH, "/html/body/main/div/div/form/div[5]/div/div[2]"), "Hasło musi zawierać przynajmniej jedną cyfrę!"))
-
+    """ T23 Rejestracja użytkownika niepoprawne - hasło bez dużej litery"""
     def test_T23(self):
         self.browser.get('http://localhost:3000/register/person')
         name = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[2]/div/input')
@@ -324,7 +325,7 @@ class TestProject(StaticLiveServerTestCase):
         self.browser.find_element_by_tag_name('button').click()
         time.sleep(2)
         self.wait.until(EC.text_to_be_present_in_element((By.XPATH, "/html/body/main/div/div/form/div[5]/div/div[2]"), "Hasło musi zawierać przynajmniej jedną dużą literę!"))
-
+    """ T24 Rejestracja użytkownika niepoprawne - błędny numer telefonu"""
     def test_T24(self):
         self.browser.get('http://localhost:3000/register/person')
         name = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[2]/div/input')
@@ -342,7 +343,7 @@ class TestProject(StaticLiveServerTestCase):
         self.browser.find_element_by_tag_name('button').click()
         time.sleep(2)
         self.wait.until(EC.text_to_be_present_in_element((By.XPATH, "/html/body/main/div/div/form/div[7]/div/div"), "Zły format telefonu!"))
-
+    """ T25 Rejestracja użytkownika niepoprawne - za krótki numer telefonu"""
     def test_T25(self):
         self.browser.get('http://localhost:3000/register/person')
         name = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[2]/div/input')
@@ -360,7 +361,7 @@ class TestProject(StaticLiveServerTestCase):
         self.browser.find_element_by_tag_name('button').click()
         time.sleep(2)
         self.wait.until(EC.text_to_be_present_in_element((By.XPATH, "/html/body/main/div/div/form/div[7]/div/div"), "Zły format telefonu!"))
-
+    """ T26 Rejestracja użytkownika niepoprawne - za długi numer telefonu"""
     def test_T26(self):
         self.browser.get('http://localhost:3000/register/person')
         name = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[2]/div/input')
@@ -902,3 +903,207 @@ class TestProject(StaticLiveServerTestCase):
         self.browser.find_element_by_tag_name('button').click()  
         self.wait.until(EC.text_to_be_present_in_element((By.XPATH, "/html/body/main/div/div/form/div[8]/div/div[2]"), "Podaj profil!"))
         self.browser.close()                       
+    """ T79 Zarządzanie profilem dziecka tworzenie profilu dziecka poprawn"""
+    def test_T79(self):
+        self.browser.get('http://localhost:3000/login')
+        self.browser.maximize_window()
+        login = self.browser.find_element_by_xpath('//html/body/main/div/div/form/div[2]/input')
+        password = self.browser.find_element_by_name('password')
+        button = self.browser.find_element_by_tag_name('button')      
+        password.send_keys('Dziennik1234')
+        login.send_keys('user@mail.com')
+        button.click()
+        time.sleep(1)
+        settings = self.browser.find_element_by_xpath('/html/body/main/nav/div/div[2]/a[1]')
+        settings.click()
+        time.sleep(1)
+        name = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[1]/div/input')
+        surname = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[2]/div/input')
+        age = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[3]/div/input')
+        name.send_keys('Jan')
+        surname.send_keys('Kowalski')
+        age.send_keys(10)
+        self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[5]/button').click()  
+        self.wait.until(EC.text_to_be_present_in_element((By.XPATH, "/html/body/div[2]/div/div/div[2]/p"), "Wysłaliśmy wiadomość z linkiem aktywacyjnym na podany adres email w celu weryfikacji."))
+        self.browser.close()
+    """ T80 Zarządzanie profilem dziecka tworzenie profilu dziecka niepoprawne - brak imienia"""
+    def test_T80(self):
+        self.browser.get('http://localhost:3000/login')
+        self.browser.maximize_window()
+        login = self.browser.find_element_by_xpath('//html/body/main/div/div/form/div[2]/input')
+        password = self.browser.find_element_by_name('password')
+        button = self.browser.find_element_by_tag_name('button')      
+        password.send_keys('Dziennik1234')
+        login.send_keys('user@mail.com')
+        button.click()
+        time.sleep(1)
+        settings = self.browser.find_element_by_xpath('/html/body/main/nav/div/div[2]/a[1]')
+        settings.click()
+        time.sleep(1)
+        name = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[1]/div/input')
+        surname = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[2]/div/input')
+        age = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[3]/div/input')
+        surname.send_keys('Kowalski')
+        age.send_keys(10)
+        self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[5]/button').click()  
+        self.wait.until(EC.text_to_be_present_in_element((By.XPATH, "/html/body/main/div/div/form/div[1]/div/div"), "Podaj imię!"))
+        self.browser.close()
+    """ T81 Zarządzanie profilem dziecka tworzenie profilu dziecka niepoprawne - błędne imię"""
+    def test_T81(self):
+        self.browser.get('http://localhost:3000/login')
+        self.browser.maximize_window()
+        login = self.browser.find_element_by_xpath('//html/body/main/div/div/form/div[2]/input')
+        password = self.browser.find_element_by_name('password')
+        button = self.browser.find_element_by_tag_name('button')      
+        password.send_keys('Dziennik1234')
+        login.send_keys('user@mail.com')
+        button.click()
+        time.sleep(1)
+        settings = self.browser.find_element_by_xpath('/html/body/main/nav/div/div[2]/a[1]')
+        settings.click()
+        time.sleep(1)
+        name = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[1]/div/input')
+        surname = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[2]/div/input')
+        age = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[3]/div/input')
+        name.send_keys('Jan1')
+        surname.send_keys('Kowalski')
+        age.send_keys(10)
+        self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[5]/button').click()  
+        self.wait.until(EC.text_to_be_present_in_element((By.XPATH, "/html/body/main/div/div/form/div[1]/div/div"), "Podano błędne imie! Powinno zaczynać się z wielkiej litery i nie zawierac cyfr."))
+        self.browser.close()
+    """ T82 Zarządzanie profilem dziecka tworzenie profilu dziecka niepoprawne - brak nazwiska"""
+    def test_T82(self):
+        self.browser.get('http://localhost:3000/login')
+        self.browser.maximize_window()
+        login = self.browser.find_element_by_xpath('//html/body/main/div/div/form/div[2]/input')
+        password = self.browser.find_element_by_name('password')
+        button = self.browser.find_element_by_tag_name('button')      
+        password.send_keys('Dziennik1234')
+        login.send_keys('user@mail.com')
+        button.click()
+        time.sleep(1)
+        settings = self.browser.find_element_by_xpath('/html/body/main/nav/div/div[2]/a[1]')
+        settings.click()
+        time.sleep(1)
+        name = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[1]/div/input')
+        surname = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[2]/div/input')
+        age = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[3]/div/input')
+        name.send_keys('Jan')
+        age.send_keys(10)
+        self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[5]/button').click()  
+        self.wait.until(EC.text_to_be_present_in_element((By.XPATH, "/html/body/main/div/div/form/div[2]/div/div"), "Podaj nazwisko!"))
+        self.browser.close()
+    """ T83 Zarządzanie profilem dziecka tworzenie profilu dziecka niepoprawne - błędne nazwisko"""
+    def test_T83(self):
+        self.browser.get('http://localhost:3000/login')
+        self.browser.maximize_window()
+        login = self.browser.find_element_by_xpath('//html/body/main/div/div/form/div[2]/input')
+        password = self.browser.find_element_by_name('password')
+        button = self.browser.find_element_by_tag_name('button')      
+        password.send_keys('Dziennik1234')
+        login.send_keys('user@mail.com')
+        button.click()
+        time.sleep(1)
+        settings = self.browser.find_element_by_xpath('/html/body/main/nav/div/div[2]/a[1]')
+        settings.click()
+        time.sleep(1)
+        name = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[1]/div/input')
+        surname = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[2]/div/input')
+        age = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[3]/div/input')
+        name.send_keys('Jan')
+        surname.send_keys('Kowalski1')
+        age.send_keys(10)
+        self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[5]/button').click()  
+        self.wait.until(EC.text_to_be_present_in_element((By.XPATH, "/html/body/main/div/div/form/div[2]/div/div"), "Podano błędne nazwisko! Powinno zaczynać się z wielkiej litery i nie zawierac cyfr."))
+        self.browser.close()
+    """ T84 Zarządzanie profilem dziecka tworzenie profilu dziecka poprawne - nazwisko dwuczłonowe"""
+    def test_T84(self):
+        self.browser.get('http://localhost:3000/login')
+        self.browser.maximize_window()
+        login = self.browser.find_element_by_xpath('//html/body/main/div/div/form/div[2]/input')
+        password = self.browser.find_element_by_name('password')
+        button = self.browser.find_element_by_tag_name('button')      
+        password.send_keys('Dziennik1234')
+        login.send_keys('user@mail.com')
+        button.click()
+        time.sleep(1)
+        settings = self.browser.find_element_by_xpath('/html/body/main/nav/div/div[2]/a[1]')
+        settings.click()
+        time.sleep(1)
+        name = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[1]/div/input')
+        surname = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[2]/div/input')
+        age = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[3]/div/input')
+        name.send_keys('Jan')
+        surname.send_keys('Kowalski-Nowak')
+        age.send_keys(10)
+        self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[5]/button').click()  
+        self.wait.until(EC.text_to_be_present_in_element((By.XPATH, "/html/body/div[2]/div/div/div[2]/p"), "Wysłaliśmy wiadomość z linkiem aktywacyjnym na podany adres email w celu weryfikacji."))
+        self.browser.close()
+    """ T85 Zarządzanie profilem dziecka tworzenie profilu dziecka niepoprawne - za mały wiek"""
+    def test_T85(self):
+        self.browser.get('http://localhost:3000/login')
+        self.browser.maximize_window()
+        login = self.browser.find_element_by_xpath('//html/body/main/div/div/form/div[2]/input')
+        password = self.browser.find_element_by_name('password')
+        button = self.browser.find_element_by_tag_name('button')      
+        password.send_keys('Dziennik1234')
+        login.send_keys('user@mail.com')
+        button.click()
+        time.sleep(1)
+        settings = self.browser.find_element_by_xpath('/html/body/main/nav/div/div[2]/a[1]')
+        settings.click()
+        time.sleep(1)
+        name = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[1]/div/input')
+        surname = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[2]/div/input')
+        age = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[3]/div/input')
+        name.send_keys('Jan')
+        surname.send_keys('Kowalski-Nowak')
+        age.send_keys(0)
+        self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[5]/button').click()  
+        self.wait.until(EC.text_to_be_present_in_element((By.XPATH, "/html/body/main/div/div/form/div[3]/div/div"), "Podano zły zakres wieku!"))
+        self.browser.close()
+    """ T86 Zarządzanie profilem dziecka tworzenie profilu dziecka niepoprawne - za duży wiek"""
+    def test_T86(self):
+        self.browser.get('http://localhost:3000/login')
+        self.browser.maximize_window()
+        login = self.browser.find_element_by_xpath('//html/body/main/div/div/form/div[2]/input')
+        password = self.browser.find_element_by_name('password')
+        button = self.browser.find_element_by_tag_name('button')      
+        password.send_keys('Dziennik1234')
+        login.send_keys('user@mail.com')
+        button.click()
+        time.sleep(1)
+        settings = self.browser.find_element_by_xpath('/html/body/main/nav/div/div[2]/a[1]')
+        settings.click()
+        time.sleep(1)
+        name = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[1]/div/input')
+        surname = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[2]/div/input')
+        age = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[3]/div/input')
+        name.send_keys('Jan')
+        surname.send_keys('Kowalski-Nowak')
+        age.send_keys(100)
+        self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[5]/button').click()  
+        self.wait.until(EC.text_to_be_present_in_element((By.XPATH, "/html/body/main/div/div/form/div[3]/div/div"), "Podano zły zakres wieku!"))
+        self.browser.close()
+    """ T87 Zarządzanie profilem dziecka tworzenie profilu dziecka niepoprawne - brak podania wieku"""
+    def test_T87(self):
+        self.browser.get('http://localhost:3000/login')
+        self.browser.maximize_window()
+        login = self.browser.find_element_by_xpath('//html/body/main/div/div/form/div[2]/input')
+        password = self.browser.find_element_by_name('password')
+        button = self.browser.find_element_by_tag_name('button')      
+        password.send_keys('Dziennik1234')
+        login.send_keys('user@mail.com')
+        button.click()
+        time.sleep(1)
+        settings = self.browser.find_element_by_xpath('/html/body/main/nav/div/div[2]/a[1]')
+        settings.click()
+        time.sleep(1)
+        name = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[1]/div/input')
+        surname = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[2]/div/input')
+        age = self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[3]/div/input')
+        name.send_keys('Jan')
+        surname.send_keys('Kowalski-Nowak')
+        self.browser.find_element_by_xpath('/html/body/main/div/div/form/div[5]/button').click()  
+        self.wait.until(EC.text_to_be_present_in_element((By.XPATH, "/html/body/main/div/div/form/div[3]/div/div"), "Podaj wiek!"))
+        self.browser.close()
